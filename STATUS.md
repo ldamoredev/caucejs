@@ -81,7 +81,7 @@ Ya hay scaffolding local (monorepo, `tsc`, Vitest, `exports`). Decisiones cerrad
 - [x] Scripts root `changeset` / `changeset:version` / `release`.
 - [x] Primer changeset: `@caucejs/core` **minor** → `0.1.0`.
 - [x] `.github/workflows/ci.yml` y `release.yml`.
-- [ ] Commit y push a `main` (el CI tiene que pasar en verde).
+- [x] Commit y push a `main`.
 
 **D. Primer publish (local, una sola vez)**
 
