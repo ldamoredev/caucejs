@@ -1,5 +1,11 @@
 # @caucejs/core
 
+## 0.2.0
+
+### Minor Changes
+
+- [`b390c88`](https://github.com/ldamoredev/caucejs/commit/b390c883211bde8c3744a67b449b8aca59824684) Thanks [@ldamoredev](https://github.com/ldamoredev)! - A typed handler can run against a caller-defined context, synchronously or asynchronously.
+
 ## 0.1.0
 
 ### Minor Changes
