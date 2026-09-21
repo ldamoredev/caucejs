@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createCauce } from "./index.js";
+import { createCauce } from "../src/index.js";
 
 describe("createCauce", () => {
   it("returns the framework name with a typed result", () => {
