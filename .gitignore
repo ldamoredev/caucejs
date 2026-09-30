@@ -67,3 +67,6 @@ vite.config.ts.timestamp-*
 *.swp
 *.swo
 .vscode-test
+
+# Local plan: a symlink to a private folder. No trailing slash, or git will not ignore the link.
+.dev

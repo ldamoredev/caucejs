@@ -1,7 +1,7 @@
 {
   "name": "@caucejs/core",
   "version": "0.2.0",
-  "description": "Núcleo de Cauce: contratos, pipeline y composición.",
+  "description": "The core of Cauce.",
   "license": "MIT",
   "type": "module",
   "publishConfig": {

@@ -1,10 +1,2 @@
-export type { Handler } from "./handler.js";
-export { dispatch } from "./dispatch.js";
-
-export type Cauce = {
-  readonly name: "cauce";
-};
-
-export function createCauce(): Cauce {
-  return { name: "cauce" };
-}
+// Intentionally empty: the core is being redesigned, and nothing from the previous API is kept.
+export {};
