@@ -35,5 +35,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to npm
         if: steps.changesets.outputs.hasChangesets == 'false'
-        working-directory: packages/core
-        run: npm publish --access public --provenance
+        # Runs on every push to main without changesets, so a version npm already has is skipped
+        # instead of failing the run.
+        run: |
+          for dir in packages/*/; do
+            manifest="${dir}package.json"
+            [ "$(node -p "require('./${manifest}').private === true")" = "true" ] && continue
+            name=$(node -p "require('./${manifest}').name")
+            version=$(node -p "require('./${manifest}').version")
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "${name}@${version} is already published"
+              continue
+            fi
+            (cd "$dir" && npm publish --access public --provenance)
+          done
