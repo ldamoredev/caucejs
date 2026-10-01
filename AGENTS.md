@@ -94,9 +94,11 @@ object for an enum, and declare fields and assign them in the constructor.
 ## Always
 
 - **No `any`.** ESM only.
-- **The core does not import `node:*`.** What depends on a runtime lives in an adapter, so Bun is one more
-  adapter and not a rewrite.
-- **One package per module** (`@caucejs/<module>`), all released with the same version.
+- **No package imports `node:*` except the runtime adapters**, such as `@caucejs/node`. What depends on a
+  runtime lives in an adapter, so Bun is one more adapter and not a rewrite. `base` builds without Node types,
+  so its build refuses the import.
+- **One package per module** (`@caucejs/<module>`), all released with the same version: a new package
+  goes into the `fixed` group of `.changeset/config.json`.
 - **No new dependency without a reason** written in the pull request.
 - **A comment says why, or it is not written.** Public API gets TSDoc: what it is for, what it costs, what it does
   in the surprising case. The reasons behind a design go in the module's `README.md`, not in the code.
