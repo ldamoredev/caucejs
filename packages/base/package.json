@@ -1,7 +1,7 @@
 {
-  "name": "@caucejs/core",
+  "name": "@caucejs/base",
   "version": "0.2.0",
-  "description": "The core of Cauce.",
+  "description": "The base of Cauce: the errors, the clock and the contract of a value that travels with async work. No dependencies, no runtime APIs.",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -22,12 +22,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ldamoredev/caucejs.git",
-    "directory": "packages/core"
+    "directory": "packages/base"
   },
   "bugs": {
     "url": "https://github.com/ldamoredev/caucejs/issues"
   },
-  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/core#readme",
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/base#readme",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
