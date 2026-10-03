@@ -1,7 +1,7 @@
 {
   "extends": "@caucejs/typescript-config/base.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": []
   },
-  "include": ["src", "test", "vitest.config.ts"]
+  "include": ["src", "test", "examples", "vitest.config.ts"]
 }

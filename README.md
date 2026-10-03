@@ -7,15 +7,16 @@ Cauce aims to cover what an application needs around its domain — dependency i
 configuration, hosting and modules, a use case bus with middlewares, web, data, background jobs and
 AI — with a small core that others can extend without touching it.
 
-> **Status: redesign in progress.** Releases `0.1.0` and `0.2.0` of `@caucejs/core` belong to an
-> earlier functional design, and nothing from them is kept. There is no usable API yet.
+> **Status: redesign in progress.** The first package of the new design is `@caucejs/base`. Releases
+> `0.1.0` and `0.2.0` of `@caucejs/core` belong to an earlier functional design, and nothing from them
+> is kept.
 
 ## Principles
 
 - **Object-oriented composition with functional building blocks.**
 - **Strict TypeScript, without a single `any`.**
-- **ESM only.** Node.js first, Bun later: the core does not import `node:*`, and runtime specifics live
-  in adapters.
+- **ESM only.** Node.js first, Bun later: no package imports `node:*` except the runtime adapters, so
+  runtime specifics live in one place.
 - **One package per module**, all released with the same version.
 - **Wraps proven libraries where a problem is already solved**, and owns the composition and the
   application model.
@@ -27,7 +28,8 @@ A pnpm workspace orchestrated with Turborepo.
 
 | Path | Package | Role |
 | --- | --- | --- |
-| `packages/core` | `@caucejs/core` | The core, being redesigned |
+| `packages/base` | `@caucejs/base` | The errors, the clock and the `AsyncLocal` contract. No dependencies |
+| `packages/node` | `@caucejs/node` | The Node.js adapter: what `base` leaves to the runtime |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
 ## Development
