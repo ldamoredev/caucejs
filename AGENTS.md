@@ -26,7 +26,7 @@ examples, live in the documents it points to.
 |---|---|
 | Write any code | [docs/conventions.md](docs/conventions.md) |
 | Build or change a module | Its design sheet, if `.dev/` exists (see below), then the module's `README.md` |
-| Register services or write an extension | [The contract below](#services-and-extensions), then "Extensions" in [docs/conventions.md](docs/conventions.md#extensions) |
+| Register services or write an extension | [The section below](#services-and-extensions), [`packages/di/README.md`](packages/di/README.md) and its canonical example |
 | Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests) |
 | Open a pull request | [Workflow](#workflow), and the `review` skill |
 
@@ -38,22 +38,30 @@ request.
 ## Services and extensions
 
 This is the part of Cauce most likely to be misread, because it works the opposite way from most containers.
-**Until the `di` package exists, the sketch below is the contract it has to meet.**
+**Copy [`packages/di/examples/ticketing.ts`](packages/di/examples/ticketing.ts)**, the canonical extension, and
+read [`packages/di/README.md`](packages/di/README.md) before designing any registration.
 
 ```ts
-export interface Extension {
-    readonly id: symbol
-    readonly options: unknown
-    readonly requires: readonly symbol[]
-    register(services: Services): void
+class SqlTalks extends Talks {
+    static readonly inject = [SqlClient, Clock] as const
+    constructor(sql: SqlClient, clock: Clock) { ... }
 }
 
 const services = new Services()
-    .add(pool({ url: 'postgres://localhost/conference' }), sql(), jsonSerializer())
+    .add(clock(), ticketing({ capacity: 300 }))
+    .addSingleton(Talks, SqlTalks)
+    .addSingleton(SqlClient, () => new PoolSqlClient(url))
 
 // a repository is one more service, and its abstract class is the token
-const talks = provider.get(Talks)
+const talks = services.build({ validate: true }).get(Talks)
 ```
+
+- **A class built by the container lists its constructor in `static readonly inject`**, in order. The
+  compiler checks the list against the constructor. No decorators, no `reflect-metadata`.
+- **A factory, written as an arrow function, is only for what is not a class of the application.** The
+  container cannot see inside it, so the validation cannot either.
+- **A token is added once.** Adding it again fails; a test changes it with `replace`. Two implementations of
+  a contract are two tokens, never keys.
 
 - **The verb is on the registry, the extension is a noun**: `services.add(sql())`, never `addSql(services)` nor
   `services.addSql()`.

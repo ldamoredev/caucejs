@@ -85,6 +85,9 @@ Decorators compile with the option and do not run without a build. Whether Cauce
 - **What is passed as a value is a function that returns an object**: `sql()`, `pool()`, `talk()`.
 - **What has state or collaborators is a class**: `Services`, `SqlTalks`, `TalkBuilder`.
 - **A one-method dependency is still an `abstract class`**, not a function type, because it has to be a token.
+- **A class the container builds lists its constructor in `static readonly inject = [...] as const`**, in order.
+  TypeScript erases the types of a constructor, and the list is what the container reads; the compiler checks
+  it against the constructor. The details are in [`packages/di/README.md`](../packages/di/README.md).
 - **Private fields use `#`**, which is private at runtime and not only for the compiler.
 - **Everything is `readonly` by default.** A change of state returns a new object.
 

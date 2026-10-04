@@ -30,6 +30,7 @@ A pnpm workspace orchestrated with Turborepo.
 | --- | --- | --- |
 | `packages/base` | `@caucejs/base` | The errors, the clock and the `AsyncLocal` contract. No dependencies |
 | `packages/node` | `@caucejs/node` | The Node.js adapter: what `base` leaves to the runtime |
+| `packages/di` | `@caucejs/di` | The dependency injection: a registry checked by the compiler, lifetimes, scopes and extensions |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
 ## Development
