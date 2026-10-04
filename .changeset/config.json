@@ -10,7 +10,8 @@
   "fixed": [
     [
       "@caucejs/base",
-      "@caucejs/node"
+      "@caucejs/node",
+      "@caucejs/di"
     ]
   ],
   "linked": [],
