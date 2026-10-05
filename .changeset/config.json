@@ -11,7 +11,8 @@
     [
       "@caucejs/base",
       "@caucejs/node",
-      "@caucejs/di"
+      "@caucejs/di",
+      "@caucejs/config"
     ]
   ],
   "linked": [],
