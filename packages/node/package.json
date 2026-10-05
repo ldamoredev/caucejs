@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/node",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The Node.js adapter of Cauce: what the other packages leave to the runtime.",
   "license": "MIT",
   "type": "module",
