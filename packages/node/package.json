@@ -1,7 +1,7 @@
 {
   "name": "@caucejs/node",
   "version": "0.2.0",
-  "description": "The Node.js adapter of Cauce: what the base package leaves to the runtime.",
+  "description": "The Node.js adapter of Cauce: what the other packages leave to the runtime.",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -36,7 +36,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@caucejs/base": "workspace:*"
+    "@caucejs/base": "workspace:*",
+    "@caucejs/config": "workspace:*"
   },
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",

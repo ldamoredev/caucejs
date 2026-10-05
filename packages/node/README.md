@@ -1,7 +1,7 @@
 # @caucejs/node
 
-The Node.js adapter of Cauce: the implementations of what `@caucejs/base` leaves to the runtime. It is
-the only package that imports `node:*`.
+The Node.js adapter of Cauce: what the other packages leave to the runtime. It is the only package that
+imports `node:*`.
 
 ```bash
 pnpm add @caucejs/node
@@ -9,7 +9,9 @@ pnpm add @caucejs/node
 
 | Export | What it implements |
 |---|---|
-| `NodeAsyncLocal` | `AsyncLocal`, on `AsyncLocalStorage` from `node:async_hooks` |
+| `NodeAsyncLocal` | `AsyncLocal` of `@caucejs/base`, on `AsyncLocalStorage` from `node:async_hooks` |
+| `jsonFile` | A source of `@caucejs/config` read from a JSON file |
+| `dotenvFile` | A source of `@caucejs/config` read from a `.env` file with `util.parseEnv`, without writing to `process.env`. Add it before `environment(process.env)`, so a variable that is really set wins |
 
 Example, in the fictitious domain of a conference: [`examples/current-attendee.ts`](examples/current-attendee.ts).
 
