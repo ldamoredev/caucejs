@@ -1,0 +1,46 @@
+{
+  "name": "@caucejs/di",
+  "version": "0.2.0",
+  "description": "The dependency injection of Cauce: a registry checked by the compiler, three lifetimes, scopes that dispose what they built, and extensions.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/di"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/di#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@caucejs/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@caucejs/base": "workspace:*"
+  }
+}
