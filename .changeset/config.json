@@ -12,7 +12,8 @@
       "@caucejs/base",
       "@caucejs/node",
       "@caucejs/di",
-      "@caucejs/config"
+      "@caucejs/config",
+      "@caucejs/hosting"
     ]
   ],
   "linked": [],

@@ -32,7 +32,7 @@ The canonical settings, to copy: [`examples/ticketing-settings.ts`](examples/tic
 
 | | |
 |---|---|
-| `Config` | The stack of sources, and `bind`, which validates a section and returns its settings |
+| `Config` | The stack of sources (`add` takes one or several, in order), and `bind`, which validates a section and returns its settings |
 | `settings(section, schema)` | The base of a settings class. The class is the token; its instances carry what the schema returned |
 | `memory`, `json`, `environment` | Sources: values written by hand, a parsed JSON document, and the environment or anything shaped like it |
 | `ConfigError` | The configuration cannot be read. `InvalidSettingsError`, below it, lists every problem of a section |

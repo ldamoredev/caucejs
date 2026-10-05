@@ -23,6 +23,12 @@ describe('the layers', () => {
         expect(fromEnvironment.bind(VenueSettings).capacity).toBe(300)
     })
 
+    it('can be added several at once, in the order given', () => {
+        const config = new Config().add(memory({ venue: { city: 'Rosario' } }), memory({ venue: { city: 'Córdoba' } }))
+
+        expect(config.bind(VenueSettings).city).toBe('Córdoba')
+    })
+
     it('let a later null unset a key', () => {
         const config = new Config().add(memory({ venue: { city: 'Rosario', capacity: 300 } })).add(memory({ venue: { capacity: null } }))
 

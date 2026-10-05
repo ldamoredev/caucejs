@@ -1,7 +1,7 @@
 {
-  "name": "@caucejs/node",
+  "name": "@caucejs/hosting",
   "version": "0.2.0",
-  "description": "The Node.js adapter of Cauce: what the other packages leave to the runtime.",
+  "description": "The host of Cauce: it composes the configuration and the container, starts what runs with the application, and stops it in order.",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -22,12 +22,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ldamoredev/caucejs.git",
-    "directory": "packages/node"
+    "directory": "packages/hosting"
   },
   "bugs": {
     "url": "https://github.com/ldamoredev/caucejs/issues"
   },
-  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/node#readme",
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/hosting#readme",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
@@ -38,12 +38,12 @@
   "dependencies": {
     "@caucejs/base": "workspace:*",
     "@caucejs/config": "workspace:*",
-    "@caucejs/hosting": "workspace:*"
+    "@caucejs/di": "workspace:*"
   },
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@caucejs/config": "workspace:*"
   }
 }

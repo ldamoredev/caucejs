@@ -12,6 +12,8 @@ pnpm add @caucejs/node
 | `NodeAsyncLocal` | `AsyncLocal` of `@caucejs/base`, on `AsyncLocalStorage` from `node:async_hooks` |
 | `jsonFile` | A source of `@caucejs/config` read from a JSON file |
 | `dotenvFile` | A source of `@caucejs/config` read from a `.env` file with `util.parseEnv`, without writing to `process.env`. Add it before `environment(process.env)`, so a variable that is really set wins |
+| `standardSources` | The standard order of the configuration for `@caucejs/hosting`: `settings.json`, `settings.<environment>.json`, `.env` and the variables of the process, the files optional |
+| `ProcessLifetime` | The `Lifetime` of `@caucejs/hosting` on `SIGINT` and `SIGTERM`. A second signal ends the process at once, with the code of that signal |
 
 Example, in the fictitious domain of a conference: [`examples/current-attendee.ts`](examples/current-attendee.ts).
 

@@ -77,6 +77,28 @@ importers:
         specifier: 'catalog:'
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
 
+  packages/hosting:
+    dependencies:
+      '@caucejs/base':
+        specifier: workspace:*
+        version: link:../base
+      '@caucejs/config':
+        specifier: workspace:*
+        version: link:../config
+      '@caucejs/di':
+        specifier: workspace:*
+        version: link:../di
+    devDependencies:
+      '@caucejs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
+
   packages/node:
     dependencies:
       '@caucejs/base':
@@ -85,6 +107,9 @@ importers:
       '@caucejs/config':
         specifier: workspace:*
         version: link:../config
+      '@caucejs/hosting':
+        specifier: workspace:*
+        version: link:../hosting
     devDependencies:
       '@caucejs/typescript-config':
         specifier: workspace:*

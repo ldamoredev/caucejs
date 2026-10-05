@@ -32,6 +32,7 @@ A pnpm workspace orchestrated with Turborepo.
 | `packages/node` | `@caucejs/node` | The Node.js adapter: what the other packages leave to the runtime |
 | `packages/di` | `@caucejs/di` | The dependency injection: a registry checked by the compiler, lifetimes, scopes and extensions |
 | `packages/config` | `@caucejs/config` | The configuration: layered sources, and settings classes validated with any Standard Schema |
+| `packages/hosting` | `@caucejs/hosting` | The host: the builder, what starts and stops with the application, and its environment |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
 ## Development

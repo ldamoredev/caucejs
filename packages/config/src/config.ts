@@ -21,9 +21,9 @@ type Origin = { readonly source: string; readonly key?: string }
 export class Config {
     readonly #sources: Source[] = []
 
-    /** Stacks a source on top of the ones already added. */
-    add(source: Source): this {
-        this.#sources.push(source)
+    /** Stacks sources on top of the ones already added, in the order given. */
+    add(...sources: Source[]): this {
+        this.#sources.push(...sources)
         return this
     }
 
