@@ -26,6 +26,7 @@ examples, live in the documents it points to.
 |---|---|
 | Write any code | [docs/conventions.md](docs/conventions.md) |
 | Build or change a module | Its design sheet, if `.dev/` exists (see below), then the module's `README.md` |
+| Start an application, or run something with it | [`packages/hosting/README.md`](packages/hosting/README.md) and its canonical example |
 | Read configuration | [`packages/config/README.md`](packages/config/README.md) and its canonical example |
 | Register services or write an extension | [The section below](#services-and-extensions), [`packages/di/README.md`](packages/di/README.md) and its canonical example |
 | Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests) |
