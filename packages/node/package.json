@@ -37,7 +37,8 @@
   },
   "dependencies": {
     "@caucejs/base": "workspace:*",
-    "@caucejs/config": "workspace:*"
+    "@caucejs/config": "workspace:*",
+    "@caucejs/hosting": "workspace:*"
   },
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",
