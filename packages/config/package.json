@@ -1,7 +1,7 @@
 {
-  "name": "@caucejs/node",
+  "name": "@caucejs/config",
   "version": "0.2.0",
-  "description": "The Node.js adapter of Cauce: what the other packages leave to the runtime.",
+  "description": "The configuration of Cauce: layered sources, and settings classes validated with any Standard Schema while the application is composed.",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -22,12 +22,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ldamoredev/caucejs.git",
-    "directory": "packages/node"
+    "directory": "packages/config"
   },
   "bugs": {
     "url": "https://github.com/ldamoredev/caucejs/issues"
   },
-  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/node#readme",
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/config#readme",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
@@ -36,12 +36,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@caucejs/base": "workspace:*",
-    "@caucejs/config": "workspace:*"
+    "@caucejs/base": "workspace:*"
   },
   "devDependencies": {
+    "@caucejs/di": "workspace:*",
     "@caucejs/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

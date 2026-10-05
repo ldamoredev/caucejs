@@ -17,15 +17,7 @@ const services = new Services()
 - **No patched prototypes**, built-ins included. A file that forgets to import the patch still compiles and fails
   at runtime, and two packages that pick the same name both compile while the last import wins.
 - **Declaration merging is allowed for types only**, when the runtime registration is explicit and its error names
-  what is missing:
-
-  ```ts
-  declare module '@caucejs/config' {
-      interface Sections {
-          sql: SqlOptions
-      }
-  }
-  ```
+  what is missing. No package uses it yet: `@caucejs/config` types a section with a settings class instead.
 
 - **An extension declares what it needs in `requires`** and does not add it. The application sees everything it
   runs, and two extensions cannot each bring their own copy of a third one with different options.
