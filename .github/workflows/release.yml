@@ -37,6 +37,10 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         # Runs on every push to main without changesets, so a version npm already has is skipped
         # instead of failing the run.
+        #
+        # pnpm packs the tarball, because only pnpm turns `workspace:*` into the version it points to;
+        # npm publishes it, because npm is what trusted publishing and provenance are documented for.
+        # A tarball that still says `workspace:` would install nowhere, so it stops the run.
         run: |
           for dir in packages/*/; do
             manifest="${dir}package.json"
@@ -47,5 +51,10 @@ jobs:
               echo "${name}@${version} is already published"
               continue
             fi
-            (cd "$dir" && npm publish --access public --provenance)
+            tarball=$(cd "$dir" && pnpm pack --pack-destination "$RUNNER_TEMP" --json | node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(0, "utf8")).filename)')
+            if tar -xOzf "$tarball" package/package.json | grep -q '"workspace:'; then
+              echo "${name}@${version} still depends on workspace:, which npm cannot install"
+              exit 1
+            fi
+            npm publish "$tarball" --access public --provenance
           done
