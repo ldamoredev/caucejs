@@ -1,5 +1,12 @@
 # @caucejs/di
 
+## 0.4.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

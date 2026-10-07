@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/base",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The base of Cauce: the errors, the clock and the contract of a value that travels with async work. No dependencies, no runtime APIs.",
   "license": "MIT",
   "type": "module",
