@@ -127,4 +127,6 @@ export class SoldOutError extends DomainError {
 - **The tests come first in the file, and the scaffolding at the bottom.**
 - **Every new extension or service is built through `Services` by at least one test**, not by hand. A test that
   builds the object directly cannot see that it was never registered.
+- **An application's tests use `@caucejs/testing`**: `Examples` for defaults, a `Scenario` with one example
+  per aggregate, and a `TestClient` in memory. Cauce's own packages do not need it.
 - **Examples compile in CI.**

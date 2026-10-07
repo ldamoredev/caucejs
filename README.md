@@ -33,6 +33,7 @@ A pnpm workspace orchestrated with Turborepo.
 | `packages/di` | `@caucejs/di` | The dependency injection: a registry checked by the compiler, lifetimes, scopes and extensions |
 | `packages/config` | `@caucejs/config` | The configuration: layered sources, and settings classes validated with any Standard Schema |
 | `packages/hosting` | `@caucejs/hosting` | The host: the builder, what starts and stops with the application, and its environment |
+| `packages/testing` | `@caucejs/testing` | What a test needs: examples without randomness, a scenario that builds and saves, a client that calls the application in memory |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
 ## Development
