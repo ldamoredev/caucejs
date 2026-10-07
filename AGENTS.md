@@ -29,7 +29,7 @@ examples, live in the documents it points to.
 | Start an application, or run something with it | [`packages/hosting/README.md`](packages/hosting/README.md) and its canonical example |
 | Read configuration | [`packages/config/README.md`](packages/config/README.md) and its canonical example |
 | Register services or write an extension | [The section below](#services-and-extensions), [`packages/di/README.md`](packages/di/README.md) and its canonical example |
-| Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests) |
+| Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests), and [`packages/testing/README.md`](packages/testing/README.md) with its canonical example |
 | Open a pull request | [Workflow](#workflow), and the `review` skill |
 
 **The design sheets.** If a `.dev/` folder exists at the root, it holds the design sheet of each module, at
