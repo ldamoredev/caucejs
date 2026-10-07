@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/config",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The configuration of Cauce: layered sources, and settings classes validated with any Standard Schema while the application is composed.",
   "license": "MIT",
   "type": "module",
