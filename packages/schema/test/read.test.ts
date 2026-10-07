@@ -1,4 +1,4 @@
-import { ApplicationError, type StandardSchemaIssue, type StandardSchemaV1 } from '@caucejs/base'
+import { ApplicationError, type BuiltBySchema, type StandardSchemaIssue, type StandardSchemaV1 } from '@caucejs/base'
 import { Services } from '@caucejs/di'
 import { describe, expect, it } from 'vitest'
 
@@ -39,6 +39,13 @@ describe('reading', () => {
 
     it('waits for a schema that validates asynchronously', async () => {
         expect(await serializer.read(schemaThat({ value: 'opening' }, { later: true }), 'anything')).toBe('opening')
+    })
+
+    it('reads a class whose schema builds the subclass it is read through, as Command.from makes them', async () => {
+        const keynote = await serializer.read(Keynote, { title: 'Opening' })
+
+        expect(keynote).toBeInstanceOf(Keynote)
+        expect(keynote.loud).toBe('OPENING')
     })
 
     it('reads with the schema of a class, and returns the instance it produces', async () => {
@@ -146,6 +153,28 @@ class Talk {
 
     constructor(title: string) {
         this.title = title
+    }
+}
+
+// What Command.from of @caucejs/application builds, written by hand: a static schema that builds `this`.
+abstract class TalkFromSchema {
+    readonly title: string
+
+    constructor(fields: { title: string }) {
+        this.title = fields.title
+    }
+
+    static get schema(): StandardSchemaV1<unknown, TalkFromSchema> {
+        const Class = this as unknown as new (fields: { title: string }) => TalkFromSchema
+        return { '~standard': { version: 1, vendor: 'by hand', validate: value => ({ value: new Class(value as { title: string }) }) } }
+    }
+}
+
+const Built = TalkFromSchema as typeof TalkFromSchema & BuiltBySchema
+
+class Keynote extends Built {
+    get loud(): string {
+        return this.title.toUpperCase()
     }
 }
 
