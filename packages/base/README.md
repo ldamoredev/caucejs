@@ -17,6 +17,7 @@ pnpm add @caucejs/base
 | `Clock`, `SystemClock` | The time as a service, so a test can fix it |
 | `AsyncLocal` | The contract of a value that travels with asynchronous work. The implementation lives in a runtime adapter, such as `NodeAsyncLocal` in `@caucejs/node` |
 | `MissingAsyncLocalError` | Reading an `AsyncLocal` outside of a `run()` |
+| `StandardSchemaV1`, `StandardJSONSchemaV1` | The contracts of [Standard Schema](https://standardschema.dev): a schema that validates, and one that describes itself as JSON Schema. Copied from the spec, so no package depends on a validator |
 
 Examples, in the fictitious domain of a conference: [`examples/tickets.ts`](examples/tickets.ts).
 

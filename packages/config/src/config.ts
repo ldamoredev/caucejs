@@ -2,7 +2,7 @@ import { ConfigError } from './errors/config-error.js'
 import { InvalidSettingsError } from './errors/invalid-settings-error.js'
 import type { SettingsClass } from './settings.js'
 import type { Source } from './source.js'
-import type { StandardSchemaIssue } from './standard-schema.js'
+import type { StandardSchemaIssue } from '@caucejs/base'
 
 type Node = { [key: string]: Node | string }
 type Origin = { readonly source: string; readonly key?: string }

@@ -5,11 +5,12 @@ export { InvalidSettingsError } from './errors/invalid-settings-error.js'
 export { json, memory } from './objects.js'
 export { settings, type SettingsClass } from './settings.js'
 export type { Entry, Source } from './source.js'
+// Kept from before the contracts moved to @caucejs/base, so code that imports them from here still compiles.
 export type {
     InferOutput,
     StandardSchemaIssue,
     StandardSchemaProps,
     StandardSchemaResult,
     StandardSchemaV1,
-} from './standard-schema.js'
+} from '@caucejs/base'
 export type { ConfigTree, ConfigValue } from './tree.js'
