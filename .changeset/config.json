@@ -15,7 +15,8 @@
       "@caucejs/config",
       "@caucejs/hosting",
       "@caucejs/testing",
-      "@caucejs/application"
+      "@caucejs/application",
+      "@caucejs/schema"
     ]
   ],
   "linked": [],

@@ -1,0 +1,48 @@
+{
+  "name": "@caucejs/schema",
+  "version": "0.4.0",
+  "description": "The JSON serializer of Cauce: it reads input with any Standard Schema into a typed value or a ValidationError, writes values with toJSON, and describes a schema as JSON Schema for a model.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/schema"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/schema#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@caucejs/base": "workspace:*",
+    "@caucejs/di": "workspace:*"
+  },
+  "devDependencies": {
+    "@caucejs/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "^4.6.5"
+  }
+}

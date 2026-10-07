@@ -1,4 +1,4 @@
-import type { StandardSchemaV1 } from './standard-schema.js'
+import type { StandardSchemaV1 } from '@caucejs/base'
 
 /**
  * A class for one section of the configuration. The class is the token the container injects; its schema
