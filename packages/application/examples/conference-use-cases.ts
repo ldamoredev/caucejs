@@ -1,6 +1,7 @@
 // The canonical use cases, to copy: a request with its handler, a middleware, the identity of the application, and
 // the extension that names all of them. A web module would open the scope and build the context for each request.
 import { Services } from '@caucejs/di'
+import * as z from 'zod'
 
 import {
     application,
@@ -32,15 +33,10 @@ export class Talks {
     }
 }
 
-// A query anyone can run: the class says so, because authorization is closed by default.
-export class GetTalk extends Query<Talk> {
+// A query anyone can run: the class says so, because authorization is closed by default. Its fields come from its
+// schema, which is also how a web request or a tool reads it.
+export class GetTalk extends Query.returning<Talk>().from(z.strictObject({ talkId: z.string().min(1) })) {
     static readonly anonymous = true
-    readonly talkId: string
-
-    constructor(talkId: string) {
-        super()
-        this.talkId = talkId
-    }
 }
 
 export class GetTalkHandler extends Handler<GetTalk> {
@@ -58,14 +54,8 @@ export class GetTalkHandler extends Handler<GetTalk> {
 }
 
 // A command that needs a permission, and answers the seats left.
-export class SellTicket extends Command<number> {
+export class SellTicket extends Command.returning<number>().from(z.strictObject({ talkId: z.string().min(1) })) {
     static readonly permissions = ['tickets']
-    readonly talkId: string
-
-    constructor(talkId: string) {
-        super()
-        this.talkId = talkId
-    }
 }
 
 export class SellTicketHandler extends Handler<SellTicket> {
@@ -129,9 +119,9 @@ export async function runTheBoxOffice(): Promise<string[]> {
     const useCases = provider.get(UseCases)
 
     await using scope = provider.createScope()
-    const talk = await useCases.execute(new GetTalk('opening'), { scope })
-    const left = await useCases.execute(new SellTicket('opening'), { scope, context: ExecutionContext.of(new BoxOffice()) })
-    await useCases.execute(new SellTicket('opening'), { scope }).catch(() => undefined)
+    const talk = await useCases.execute(new GetTalk({ talkId: 'opening' }), { scope })
+    const left = await useCases.execute(new SellTicket({ talkId: 'opening' }), { scope, context: ExecutionContext.of(new BoxOffice()) })
+    await useCases.execute(new SellTicket({ talkId: 'opening' }), { scope }).catch(() => undefined)
 
     return [...provider.get(Journal).entries, `${talk.title}: ${left} seat left`]
 }

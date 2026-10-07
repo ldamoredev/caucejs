@@ -48,6 +48,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/base:
     devDependencies:

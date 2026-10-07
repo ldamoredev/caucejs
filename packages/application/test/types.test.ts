@@ -1,5 +1,6 @@
 import { Services } from '@caucejs/di'
 import { describe, expect, it } from 'vitest'
+import * as z from 'zod'
 
 import { application, Command, Handler, Query, UseCases, type ApplicationBuilder, type ResultOf } from '../src/index.js'
 import { GetVenue, GetVenueHandler, Journal, OpenDoors, OpenDoorsHandler } from './support/conference.js'
@@ -50,3 +51,29 @@ class WrongList extends Handler<GetVenue> {
 
 void GetVenueHandler
 void Query
+
+export function whatFromChecks(rename: FromRename): void {
+    // @ts-expect-error the fields of a request from its schema are read only
+    rename.title = 'Closing'
+    // @ts-expect-error a field the schema does not have
+    void rename.speaker
+    // @ts-expect-error the constructor takes every field the schema produces
+    new FromRename({ id: 't1' })
+}
+
+class FromRename extends Command.from(z.object({ id: z.string(), title: z.string() })) {}
+class FromSell extends Command.returning<number>().from(z.object({ talk: z.string() })) {}
+class FromGet extends Query.returning<string>().from(z.object({ id: z.string() })) {}
+export const fromResults: [Equal<ResultOf<FromRename>, void>, Equal<ResultOf<FromSell>, number>, Equal<ResultOf<FromGet>, string>] = [true, true, true]
+
+export function whatFromPairs(app: ApplicationBuilder): void {
+    // @ts-expect-error a handler of a request from another schema, whose result differs
+    app.handle(FromRename, FromSellHandler)
+    app.handle(FromSell, FromSellHandler)
+}
+
+class FromSellHandler extends Handler<FromSell> {
+    async execute(request: FromSell): Promise<number> {
+        return request.talk.length
+    }
+}
