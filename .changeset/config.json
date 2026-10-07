@@ -14,7 +14,8 @@
       "@caucejs/di",
       "@caucejs/config",
       "@caucejs/hosting",
-      "@caucejs/testing"
+      "@caucejs/testing",
+      "@caucejs/application"
     ]
   ],
   "linked": [],
