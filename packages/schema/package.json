@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/schema",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "The JSON serializer of Cauce: it reads input with any Standard Schema into a typed value or a ValidationError, writes values with toJSON, and describes a schema as JSON Schema for a model.",
   "license": "MIT",
   "type": "module",
