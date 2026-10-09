@@ -50,6 +50,9 @@ The contracts themselves, `StandardSchemaV1` and `StandardJSONSchemaV1`, are in 
   out of the box and drops keys a schema does not have by default. Valibot describes itself through
   `toStandardJsonSchema` of `@valibot/to-json-schema`; ArkType keeps unknown keys unless the schema says
   `'+': 'reject'`.
+- **A request of `@caucejs/application` declared with `Command.from(schema)` is read as the subclass it is**, methods
+  of its own included: its class is marked for the compiler, so `read` returns the subclass instead of what the
+  schema says it produces.
 - **A class says how it is read.** Its `static readonly schema` produces an instance of it, usually with a
   `transform` that calls the constructor, so `read(SellTickets, body)` returns a `SellTickets`. The compiler checks
   that the schema produces that class, and the same serializer reads a web request and the arguments of a tool.

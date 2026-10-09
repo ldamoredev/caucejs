@@ -9,10 +9,8 @@ pnpm add @caucejs/application
 ```
 
 ```ts
-class SellTicket extends Command<number> {
+class SellTicket extends Command.returning<number>().from(z.strictObject({ talkId: z.string().min(1) })) {
     static readonly permissions = ['tickets']
-    readonly talkId: string
-    constructor(talkId: string) { super(); this.talkId = talkId }
 }
 
 class SellTicketHandler extends Handler<SellTicket> {
@@ -24,7 +22,7 @@ class SellTicketHandler extends Handler<SellTicket> {
 services.add(application(app => app.use(Authorization).handle(SellTicket, SellTicketHandler)))
 
 await using scope = provider.createScope()
-const left = await provider.get(UseCases).execute(new SellTicket('opening'), { scope, context: ExecutionContext.of(boxOffice) })
+const left = await provider.get(UseCases).execute(new SellTicket({ talkId: 'opening' }), { scope, context: ExecutionContext.of(boxOffice) })
 ```
 
 The canonical use cases, to copy: [`examples/conference-use-cases.ts`](examples/conference-use-cases.ts).
@@ -34,6 +32,7 @@ The canonical use cases, to copy: [`examples/conference-use-cases.ts`](examples/
 | | |
 |---|---|
 | `Command`, `Query`, `Request` | What a use case is asked to do. `Command<R = void>` changes something, `Query<R>` only reads |
+| `Command.from`, `Command.returning<R>().from`, `Query.returning<R>().from` | A request declared from its schema: its fields and its constructor come from what the schema produces |
 | `Handler` | Executes one kind of request, with the context of the execution |
 | `Middleware` | Wraps every execution: `execute(request, context, next)` |
 | `application` | The extension: `use` adds middlewares, in order; `handle` pairs a request with its handler |
@@ -50,6 +49,13 @@ The canonical use cases, to copy: [`examples/conference-use-cases.ts`](examples/
   so `execute(new GetTalk(id))` is a `Promise<Talk>` and `handle` refuses a handler that answers something else.
   Two request classes with the same fields are the same type to the compiler, though: give each request a field of
   its own when a handler could be paired with the wrong one.
+- **A request is declared once, from its schema**, the way a data class is: `Command.from(schema)` gives the class
+  its read-only fields and a constructor that takes them, and a static `schema` that validates with the schema
+  given and builds the subclass it is read through, so the JSON serializer of `@caucejs/schema` reads it and returns
+  that class, methods of its own included. It describes itself as JSON Schema when the schema given does. The
+  result goes first: `Command.returning<TicketId>().from(schema)`. A request built in code with `new` is not
+  validated: the schema is for what comes from outside. Any Standard Schema works; the examples use Zod. A request
+  can still be written by hand, extending `Command<R>`.
 - **A handler is paired by hand, and once.** TypeScript cannot read at runtime which request a handler takes, and
   discovering handlers is what Cauce does not do. A second handler for the same request fails; a test changes a
   handler with `services.replace`.

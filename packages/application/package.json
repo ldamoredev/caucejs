@@ -42,6 +42,7 @@
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "^4.6.5"
   }
 }

@@ -7,6 +7,7 @@ export { InvalidArgumentError } from './errors/invalid-argument-error.js'
 export { MissingAsyncLocalError } from './errors/missing-async-local-error.js'
 export { NotFoundError } from './errors/not-found-error.js'
 export type {
+    BuiltBySchema,
     InferInput,
     InferOutput,
     StandardJSONSchemaConverter,

@@ -2,17 +2,18 @@ import type { StandardSchemaIssue, StandardSchemaV1 } from '@caucejs/base'
 
 import { JsonSchemaUnavailableError } from './errors/json-schema-unavailable-error.js'
 import { ValidationError, type ValidationIssue } from './errors/validation-error.js'
-import { JsonSerializer, type Describable, type Readable, type ReadableClass, type SchemaOptions } from './json-serializer.js'
+import { JsonSerializer, type Describable, type Readable, type ReadableClass, type SchemaBuiltClass, type SchemaOptions } from './json-serializer.js'
 
 /**
  * The serializer of Cauce: it reads with any Standard Schema, writes with `JSON.stringify`, and describes with any
  * Standard JSON Schema. It depends on no schema library; the application picks one.
  */
 export class DefaultJsonSerializer extends JsonSerializer {
+    read<C extends SchemaBuiltClass>(type: C, input: unknown): Promise<InstanceType<C>>
     read<T>(type: ReadableClass<T>, input: unknown): Promise<T>
     read<T>(schema: StandardSchemaV1<unknown, T>, input: unknown): Promise<T>
     async read<T>(readable: Readable<T>, input: unknown): Promise<T> {
-        const schema = '~standard' in readable ? readable : readable.schema
+        const schema = ('~standard' in readable ? readable : readable.schema) as StandardSchemaV1<unknown, T>
         const result = await schema['~standard'].validate(input)
         if (result.issues) throw new ValidationError(result.issues.map(issueOf))
         return result.value
