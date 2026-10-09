@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/testing",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "What Cauce gives a test: examples without randomness, a scenario that builds and saves, and a client that calls an application in memory.",
   "license": "MIT",
   "type": "module",
