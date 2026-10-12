@@ -1,5 +1,20 @@
 # @caucejs/node
 
+## 0.6.0
+
+### Minor Changes
+
+- [#19](https://github.com/ldamoredev/caucejs/pull/19) [`49fac2d`](https://github.com/ldamoredev/caucejs/commit/49fac2d544f4749d9ae55f5d2875b21937ee8c72) Thanks [@ldamoredev](https://github.com/ldamoredev)! - Add `HttpServer` and `HttpServerSettings`: a hosted service that serves the `fetch` of the web of the application on Node, fails to start on a port that is taken, and stops gracefully, answering each request in flight with `Connection: close` so no connection kept alive holds the stop.
+
+### Patch Changes
+
+- Updated dependencies [[`a032f1b`](https://github.com/ldamoredev/caucejs/commit/a032f1baf304bbb2e2b0dd0abfeab44f12a9b4ee)]:
+  - @caucejs/web@0.6.0
+  - @caucejs/di@0.6.0
+  - @caucejs/config@0.6.0
+  - @caucejs/hosting@0.6.0
+  - @caucejs/base@0.6.0
+
 ## 0.5.0
 
 ### Patch Changes
