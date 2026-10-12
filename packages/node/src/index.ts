@@ -1,4 +1,6 @@
 export { dotenvFile, jsonFile, type FileOptions } from './files.js'
+export { HttpServer } from './http-server.js'
+export { HttpServerSettings } from './http-server-settings.js'
 export { NodeAsyncLocal } from './node-async-local.js'
 export { ProcessLifetime, type ProcessLifetimeOptions } from './process-lifetime.js'
 export { standardSources, type StandardSourcesOptions } from './standard-sources.js'
