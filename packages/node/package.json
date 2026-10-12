@@ -38,12 +38,18 @@
   "dependencies": {
     "@caucejs/base": "workspace:*",
     "@caucejs/config": "workspace:*",
-    "@caucejs/hosting": "workspace:*"
+    "@caucejs/hosting": "workspace:*",
+    "@caucejs/web": "workspace:*",
+    "@caucejs/di": "workspace:*",
+    "@hono/node-server": "^2.1.4"
   },
   "devDependencies": {
     "@caucejs/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@caucejs/application": "workspace:*",
+    "@caucejs/schema": "workspace:*",
+    "@caucejs/testing": "workspace:*"
   }
 }

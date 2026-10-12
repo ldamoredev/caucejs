@@ -129,10 +129,28 @@ importers:
       '@caucejs/config':
         specifier: workspace:*
         version: link:../config
+      '@caucejs/di':
+        specifier: workspace:*
+        version: link:../di
       '@caucejs/hosting':
         specifier: workspace:*
         version: link:../hosting
+      '@caucejs/web':
+        specifier: workspace:*
+        version: link:../web
+      '@hono/node-server':
+        specifier: ^2.1.4
+        version: 2.1.4(hono@4.13.13)
     devDependencies:
+      '@caucejs/application':
+        specifier: workspace:*
+        version: link:../application
+      '@caucejs/schema':
+        specifier: workspace:*
+        version: link:../schema
+      '@caucejs/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@caucejs/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -289,6 +307,12 @@ packages:
 
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
+
+  '@hono/node-server@2.1.4':
+    resolution: {integrity: sha512-2g1qeHl4BduwDn6L8nkAvDrPUWPMlkQ//a5NhP/zIyaXKMjZNRV+cG9Csu+BiJFf6+68pqzjf4Hi5sJGKHuS1g==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      hono: ^4 || ^5.0.0-0
 
   '@inquirer/external-editor@1.0.3':
     resolution: {integrity: sha512-RWbSrDiYmO4LbejWY7ttpxczuwQyZLBUyygsA9Nsv95hpzUWwnNTVQmAq3xuh7vNwCp07UTmE5i11XAEExx4RA==}
@@ -1344,6 +1368,10 @@ snapshots:
       fs-extra: 7.0.1
       human-id: 4.2.1
       prettier: 2.8.8
+
+  '@hono/node-server@2.1.4(hono@4.13.13)':
+    dependencies:
+      hono: 4.13.13
 
   '@inquirer/external-editor@1.0.3(@types/node@24.13.5)':
     dependencies:
