@@ -1,5 +1,13 @@
 # @caucejs/schema
 
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies [[`a032f1b`](https://github.com/ldamoredev/caucejs/commit/a032f1baf304bbb2e2b0dd0abfeab44f12a9b4ee)]:
+  - @caucejs/di@0.6.0
+  - @caucejs/base@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
