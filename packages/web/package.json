@@ -1,0 +1,52 @@
+{
+  "name": "@caucejs/web",
+  "version": "0.5.0",
+  "description": "The web of Cauce, on Hono: routes that are use cases, declared with the class of their request; one DI scope and one identity per request; errors as problem details; and the fetch of the application, for a server or a test.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/web"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/web#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@caucejs/application": "workspace:*",
+    "@caucejs/base": "workspace:*",
+    "@caucejs/di": "workspace:*",
+    "@caucejs/schema": "workspace:*",
+    "hono": "^4.13.13"
+  },
+  "devDependencies": {
+    "@caucejs/testing": "workspace:*",
+    "@caucejs/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "^4.6.5"
+  }
+}
