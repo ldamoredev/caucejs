@@ -35,6 +35,7 @@ A pnpm workspace orchestrated with Turborepo.
 | `packages/hosting` | `@caucejs/hosting` | The host: the builder, what starts and stops with the application, and its environment |
 | `packages/application` | `@caucejs/application` | The use case bus: requests with a typed result, handlers and middlewares built per execution, and authorization |
 | `packages/schema` | `@caucejs/schema` | The JSON serializer: reads input with any Standard Schema into a typed value or a `ValidationError`, writes JSON, and describes a schema for a model |
+| `packages/web` | `@caucejs/web` | The web, on Hono: routes that are use cases, one scope and one identity per request, problems as RFC 9457, and the `fetch` of the application |
 | `packages/testing` | `@caucejs/testing` | What a test needs: examples without randomness, a scenario that builds and saves, a client that calls the application in memory |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
