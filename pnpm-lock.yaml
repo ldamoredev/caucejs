@@ -189,6 +189,40 @@ importers:
 
   packages/typescript-config: {}
 
+  packages/web:
+    dependencies:
+      '@caucejs/application':
+        specifier: workspace:*
+        version: link:../application
+      '@caucejs/base':
+        specifier: workspace:*
+        version: link:../base
+      '@caucejs/di':
+        specifier: workspace:*
+        version: link:../di
+      '@caucejs/schema':
+        specifier: workspace:*
+        version: link:../schema
+      hono:
+        specifier: ^4.13.13
+        version: 4.13.13
+    devDependencies:
+      '@caucejs/testing':
+        specifier: workspace:*
+        version: link:../testing
+      '@caucejs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+
 packages:
 
   '@babel/runtime@7.29.7':
@@ -703,6 +737,10 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  hono@4.13.13:
+    resolution: {integrity: sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==}
+    engines: {node: '>=16.9.0'}
 
   human-id@4.2.1:
     resolution: {integrity: sha512-zPGsiS+dWoTZtZ4AtpA9Y+BdSFSNWvnouNlWNoUFyAM6xHOHmdCvqO3k8AIbdamCOv4gUFUVNPf6rJFfc4UiJw==}
@@ -1619,6 +1657,8 @@ snapshots:
       slash: 3.0.0
 
   graceful-fs@4.2.11: {}
+
+  hono@4.13.13: {}
 
   human-id@4.2.1: {}
 

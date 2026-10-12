@@ -31,6 +31,7 @@ examples, live in the documents it points to.
 | Register services or write an extension | [The section below](#services-and-extensions), [`packages/di/README.md`](packages/di/README.md) and its canonical example |
 | Write a use case, a handler or a middleware | [`packages/application/README.md`](packages/application/README.md) and its canonical example |
 | Read a body, a form or the arguments of a tool | [`packages/schema/README.md`](packages/schema/README.md) and its canonical example |
+| Serve a route, a page or a controller | [`packages/web/README.md`](packages/web/README.md) and its canonical example |
 | Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests), and [`packages/testing/README.md`](packages/testing/README.md) with its canonical example |
 | Open a pull request | [Workflow](#workflow), and the `review` skill |
 

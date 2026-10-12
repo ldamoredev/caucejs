@@ -4,6 +4,7 @@ import { Lifetimes, type Lifetime } from './lifetimes.js'
 import { Provider } from './provider.js'
 import { sourceOf, type Registration, type Source, type StoredClass } from './registration.js'
 import { describeOptions, sameOptions } from './same-options.js'
+import { Scopes } from './scopes.js'
 import { nameOf, type Dependencies, type Factory, type Injectable, type Token } from './token.js'
 import { validate } from './validate.js'
 
@@ -79,6 +80,7 @@ export class Services {
     }
 
     #add(token: Token<unknown>, lifetime: Lifetime, source: Source): this {
+        if (token === Scopes) throw new CompositionError('Scopes is provided by the container, so it is never added')
         if (this.#registrations.has(token)) {
             throw new CompositionError(`${nameOf(token)} was already added: use replace to change it`)
         }

@@ -1,6 +1,7 @@
 import { CompositionError } from './errors/composition-error.js'
 import { Lifetimes } from './lifetimes.js'
 import { dependenciesOf, type Registration } from './registration.js'
+import { Scopes } from './scopes.js'
 import { nameOf, type Token } from './token.js'
 
 /**
@@ -17,7 +18,7 @@ export function validate(registrations: ReadonlyMap<Token<unknown>, Registration
 function* missing(registrations: ReadonlyMap<Token<unknown>, Registration>): Generator<string> {
     for (const registration of registrations.values()) {
         for (const dependency of dependenciesOf(registration)) {
-            if (!registrations.has(dependency)) {
+            if (!registrations.has(dependency) && dependency !== Scopes) {
                 yield `${nameOf(registration.token)} needs ${nameOf(dependency)}, which was never added`
             }
         }

@@ -35,6 +35,7 @@ The canonical extension, to copy: [`examples/ticketing.ts`](examples/ticketing.t
 | Lifetimes | `addSingleton`, `addScoped`, `addTransient` |
 | `Provider` | Resolves, creates classes that were not added, opens scopes, and disposes its singletons |
 | `Scope` | The services of one request or one job, disposed when it ends |
+| `Scopes` | Opens scopes, for a class that needs one per unit of work. The container provides it: it is never added |
 | `Extension` | How a package adds what it brings: `services.add(sql())` |
 | `CompositionError` | The family of errors that say the application is composed wrong |
 
@@ -52,6 +53,8 @@ The canonical extension, to copy: [`examples/ticketing.ts`](examples/ticketing.t
 - **A token is added once.** A second `add` fails instead of letting the last one win, and `replace`
   says in the test what changes. Two implementations of a contract are two tokens: `abstract class
   SessionCache extends Cache {}`. There are no keys and no `getAll`: what is collected is named.
+- **What opens scopes is a service the container provides**, `Scopes`, as .NET provides `IServiceScopeFactory`: `web` opens
+  one per request with it, and a class lists it in `inject` like any other. It is the only service nobody adds.
 - **Scopes are explicit.** A scoped service is asked for to a scope, never to the root, and a singleton
   is always built outside of any scope, so it cannot capture one.
 - **The container disposes what it built**, with `Symbol.dispose` and `Symbol.asyncDispose`, in reverse

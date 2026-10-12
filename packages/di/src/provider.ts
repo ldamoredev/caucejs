@@ -4,6 +4,7 @@ import { ScopeError } from './errors/scope-error.js'
 import { ServiceNotAddedError } from './errors/service-not-added-error.js'
 import { Lifetimes } from './lifetimes.js'
 import type { Registration, StoredClass } from './registration.js'
+import { Scopes } from './scopes.js'
 import { nameOf, type Dependencies, type Injectable, type Resolver, type Token } from './token.js'
 
 type Owner = { readonly owned: unknown[]; disposed: boolean }
@@ -19,9 +20,16 @@ export class Provider implements Resolver, AsyncDisposable {
     readonly #registrations: ReadonlyMap<Token<unknown>, Registration>
     readonly #singletons = new Map<Token<unknown>, unknown>()
     readonly #root: Owner = { owned: [], disposed: false }
+    readonly #scopes: Scopes
 
     constructor(registrations: ReadonlyMap<Token<unknown>, Registration>) {
         this.#registrations = registrations
+        const provider = this
+        this.#scopes = new (class extends Scopes {
+            create(): Scope {
+                return provider.createScope()
+            }
+        })()
     }
 
     /** The service added for `token`. Throws {@link ServiceNotAddedError} if it never was. */
@@ -55,6 +63,8 @@ export class Provider implements Resolver, AsyncDisposable {
     #resolve(token: Token<unknown>, scope: ScopeState | null, path: readonly Token<unknown>[]): unknown {
         this.#ensureOpen(scope ?? this.#root)
         if (path.includes(token)) throw new CircularDependencyError([...path, token].map(nameOf))
+        // the only service the container provides on its own: what opens scopes
+        if (token === Scopes) return this.#scopes
         const registration = this.#registrations.get(token)
         if (!registration) throw new ServiceNotAddedError(nameOf(token), [...path].reverse().map(nameOf))
         const next = [...path, token]
