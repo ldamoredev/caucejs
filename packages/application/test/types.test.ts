@@ -13,6 +13,16 @@ export function whatTheCompilerRefuses(app: ApplicationBuilder): void {
     app.handle(GetVenue, WrongList)
     // @ts-expect-error a class that is not a middleware
     app.use(Journal)
+    // @ts-expect-error a handler alone that does not name its request
+    app.handle(OpenDoorsHandler)
+    // @ts-expect-error a handler that names a request, paired with another one
+    app.handle(OpenDoors, VenueByName)
+}
+
+export class VenueByName extends Handler.of(GetVenue) {
+    async execute(): Promise<string> {
+        return 'north hall'
+    }
 }
 
 export async function whatTheCompilerInfers(useCases: UseCases): Promise<void> {

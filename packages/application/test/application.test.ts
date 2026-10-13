@@ -23,8 +23,22 @@ describe('the application extension', () => {
         expect(() => services.build({ validate: true })).toThrow(/Outer needs Journal, which was never added/)
     })
 
+    it('adds alone a handler that names its request, and runs it for that request', async () => {
+        const provider = new Services().add(application(app => app.handle(DoorsByName))).build()
+
+        await provider.get(UseCases).execute(new OpenDoors('east'), { scope: provider })
+
+        expect(DoorsByName.opened).toEqual(['east'])
+    })
+
     it('refuses a second handler for the same request, naming the first', () => {
         const adding = () => new Services().add(application(app => app.handle(OpenDoors, OpenDoorsHandler).handle(OpenDoors, OtherDoorsHandler)))
+
+        expect(adding).toThrow(new CompositionError('OpenDoors already has a handler: OpenDoorsHandler'))
+    })
+
+    it('refuses a second handler that names a request already handled', () => {
+        const adding = () => new Services().add(application(app => app.handle(OpenDoors, OpenDoorsHandler).handle(DoorsByName)))
 
         expect(adding).toThrow(new CompositionError('OpenDoors already has a handler: OpenDoorsHandler'))
     })
@@ -67,5 +81,13 @@ class NamedHandler extends Handler<Named> {
 class FixedNameHandler extends NamedHandler {
     override async execute(): Promise<string> {
         return 'fixed'
+    }
+}
+
+class DoorsByName extends Handler.of(OpenDoors) {
+    static readonly opened: string[] = []
+
+    async execute(request: OpenDoors): Promise<void> {
+        DoorsByName.opened.push(request.gate)
     }
 }

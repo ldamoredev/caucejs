@@ -28,15 +28,21 @@ export class ApplicationBuilder {
     }
 
     /**
-     * Pairs a request with its handler. The compiler checks that the handler takes that request and answers its
-     * result, and the validation of the container checks its constructor. A request takes one handler.
+     * Adds the handler of a request. A handler built on `Handler.of(GetTalk)` names its request and is added alone:
+     * `handle(GetTalkHandler)`; any other is paired with it: `handle(GetTalk, GetTalkHandler)`. The compiler checks
+     * that the handler takes that request and answers its result, and the validation of the container checks its
+     * constructor. A request takes one handler.
      */
-    handle<T extends Request<unknown>, D extends Dependencies>(request: Token<T>, handler: Injectable<Handler<T>, D>): this {
+    handle<T extends Request<unknown>, D extends Dependencies>(handler: Injectable<Handler<T>, D> & { readonly request: Token<T> }): this
+    handle<T extends Request<unknown>, D extends Dependencies>(request: Token<T>, handler: Injectable<Handler<T>, D>): this
+    handle(first: unknown, second?: unknown): this {
+        const handler = (second ?? first) as HandlerClass
+        const request = second === undefined ? handler.request : (first as Token<Request<unknown>>)
         const current = this.#handlers.get(request)
         if (current) throw new CompositionError(`${request.name} already has a handler: ${current.name}`)
-        const token = handler as unknown as Token<Handler<T>>
+        const token = handler as unknown as Token<Handler<Request<unknown>>>
         this.#services.addTransient(token, handler)
-        this.#handlers.set(request, token as Token<Handler<Request<unknown>>>)
+        this.#handlers.set(request, token)
         return this
     }
 
@@ -44,6 +50,9 @@ export class ApplicationBuilder {
         return new UseCases(new Map(this.#handlers), [...this.#middlewares])
     }
 }
+
+// What `handle` stores: a class of handler, and the request it names when it was built on `Handler.of`.
+type HandlerClass = Injectable<Handler<Request<unknown>>> & { readonly request: Token<Request<unknown>> }
 
 const applicationId = Symbol('application')
 

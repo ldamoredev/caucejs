@@ -13,13 +13,19 @@ class SellTicket extends Command.returning<number>().from(z.strictObject({ talkI
     static readonly permissions = ['tickets']
 }
 
-class SellTicketHandler extends Handler<SellTicket> {
+class SellTicketHandler extends Handler.of(SellTicket) {
     static readonly inject = [Talks] as const
     constructor(talks: Talks) { ... }
     async execute(request: SellTicket, context: ExecutionContext): Promise<number> { ... }
 }
 
-services.add(application(app => app.use(Authorization).handle(SellTicket, SellTicketHandler)))
+// in a module of a web application: app.useCases.use(Authorization) and app.useCases.handle(SellTicketHandler)
+services.add(
+    application(app => {
+        app.use(Authorization)
+        app.handle(SellTicketHandler)
+    }),
+)
 
 await using scope = provider.createScope()
 const left = await provider.get(UseCases).execute(new SellTicket({ talkId: 'opening' }), { scope, context: ExecutionContext.of(boxOffice) })
@@ -33,9 +39,9 @@ The canonical use cases, to copy: [`examples/conference-use-cases.ts`](examples/
 |---|---|
 | `Command`, `Query`, `Request` | What a use case is asked to do. `Command<R = void>` changes something, `Query<R>` only reads |
 | `Command.from`, `Command.returning<R>().from`, `Query.returning<R>().from` | A request declared from its schema: its fields and its constructor come from what the schema produces |
-| `Handler` | Executes one kind of request, with the context of the execution |
+| `Handler` | Executes one kind of request, with the context of the execution. `Handler.of(SellTicket)` names its request, so it is added alone |
 | `Middleware` | Wraps every execution: `execute(request, context, next)` |
-| `application` | The extension: `use` adds middlewares, in order; `handle` pairs a request with its handler |
+| `application`, `ApplicationBuilder` | The extension, and what `WebApplicationBuilder` exposes as `useCases`: `use` adds middlewares, in order; `handle` adds a handler, alone when it names its request |
 | `UseCases` | Executes a request: `execute(request, { scope, context })` |
 | `ExecutionContext`, `ContextKey` | Who executes, and values under typed keys. It never changes |
 | `Identity`, `AnonymousIdentity`, `SystemIdentity` | Who executes. The application writes its own |
