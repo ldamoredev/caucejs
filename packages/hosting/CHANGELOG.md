@@ -1,5 +1,18 @@
 # @caucejs/hosting
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22](https://github.com/ldamoredev/caucejs/pull/22) [`eb3fee3`](https://github.com/ldamoredev/caucejs/commit/eb3fee3dc58e732ea23bbd305b6e06429e21502c) Thanks [@ldamoredev](https://github.com/ldamoredev)! - Modules: `class Conference extends Module` composes with statements in `compose(app)`, and `builder.addModule(Conference)` composes it once per class. `builder.addSettings(DoorsSettings)` binds settings when the host is built, with every source added.
+
+### Patch Changes
+
+- Updated dependencies [[`ddb92f3`](https://github.com/ldamoredev/caucejs/commit/ddb92f3b1e92b6326a13368bed71e4567328ba84), [`d76b129`](https://github.com/ldamoredev/caucejs/commit/d76b129e807391d26bf8f83d2335871f5e38e1ec)]:
+  - @caucejs/config@0.7.0
+  - @caucejs/di@0.7.0
+  - @caucejs/base@0.7.0
+
 ## 0.6.0
 
 ### Patch Changes

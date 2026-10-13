@@ -1,5 +1,16 @@
 # @caucejs/di
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22](https://github.com/ldamoredev/caucejs/pull/22) [`d76b129`](https://github.com/ldamoredev/caucejs/commit/d76b129e807391d26bf8f83d2335871f5e38e1ec) Thanks [@ldamoredev](https://github.com/ldamoredev)! - A class that is its own token is added alone: `services.addSingleton(Schedule)`, and the same with `addScoped` and `addTransient`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes
