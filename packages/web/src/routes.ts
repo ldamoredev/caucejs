@@ -25,13 +25,17 @@ export type PathFits<Path extends string, C extends RequestClass> =
         ? C
         : `the path names ${Exclude<ParamKeys<Path>, keyof InstanceType<C>> & string}, which the request does not have`
 
-/** How a route that is a use case answers: its result as JSON, with this status; or a redirect, 303 by default. */
+/**
+ * How a route that is a use case answers: its result as JSON, with this status; a redirect, 303 by default; or a page,
+ * the HTML that `html` writes with the result.
+ */
 export type Respond<C extends RequestClass> =
     | { readonly status?: 200 | 201 | 202 }
     | {
           readonly redirect: (result: ResultOf<InstanceType<C>>, request: InstanceType<C>) => string
           readonly status?: 301 | 302 | 303 | 307 | 308
       }
+    | { readonly html: (result: ResultOf<InstanceType<C>>, request: InstanceType<C>) => string | Promise<string> }
 
 /**
  * Runs a use case from a route written by hand: the fields are read with the schema of the class, in the scope and as
@@ -100,6 +104,7 @@ export class Routes {
             const request = await this.#read(target, fields)
             const result = await this.#execute(c, request)
             if (respond && 'redirect' in respond) return c.redirect(respond.redirect(result, request), respond.status ?? 303)
+            if (respond && 'html' in respond) return c.html(await respond.html(result, request))
             if (result === undefined) return c.body(null, 204)
             return c.body(this.#serializer.write(result), respond?.status ?? 200, { 'content-type': 'application/json' })
         })

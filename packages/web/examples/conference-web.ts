@@ -1,6 +1,7 @@
 // The canonical web, to copy: a controller whose routes are use cases, declared with the class of their request,
-// and a page written by hand; an authenticator; the middlewares of Hono; and the fetch of the application, which a
-// server serves and a test calls in memory, as here.
+// a page that is one too, and a route written by hand; an authenticator; the middlewares of Hono; and the fetch of the
+// application, which a server serves and a test calls in memory, as here. On Node, an application composes the same
+// with WebApplication.builder(), in @caucejs/node.
 import { AnonymousIdentity, application, Authorization, Command, Handler, Identity, Query } from '@caucejs/application'
 import { NotFoundError } from '@caucejs/base'
 import { Services } from '@caucejs/di'
@@ -34,7 +35,7 @@ export class RenameTalk extends Command.returning<Talk>().from(z.strictObject({ 
     static readonly permissions = ['talks']
 }
 
-export class GetTalkHandler extends Handler<GetTalk> {
+export class GetTalkHandler extends Handler.of(GetTalk) {
     static readonly inject = [Talks] as const
     readonly #talks: Talks
     constructor(talks: Talks) {
@@ -46,7 +47,7 @@ export class GetTalkHandler extends Handler<GetTalk> {
     }
 }
 
-export class RenameTalkHandler extends Handler<RenameTalk> {
+export class RenameTalkHandler extends Handler.of(RenameTalk) {
     static readonly inject = [Talks] as const
     readonly #talks: Talks
     constructor(talks: Talks) {
@@ -60,14 +61,15 @@ export class RenameTalkHandler extends Handler<RenameTalk> {
     }
 }
 
-// A controller: routes that are use cases name their request; a page is written by hand, inline, never as a method.
+// A controller: routes that are use cases name their request, and a page is one that writes HTML. A route that is not
+// a use case is written by hand, inline, never as a method.
 export class TalksController extends Controller {
     registerRoutes(routes: Routes): void {
-        routes
-            .get('/talks/:id', GetTalk)
-            .post('/talks/:id/title', RenameTalk)
-            .post('/talks/:id/rename', RenameTalk, { redirect: talk => `/pages/talks/${talk.id}` })
-            .get('/pages/talks/:id', async (c, run) => c.html(`<h1>${(await run(GetTalk, { id: c.req.param('id') })).title}</h1>`))
+        routes.get('/talks/:id', GetTalk)
+        routes.post('/talks/:id/title', RenameTalk)
+        routes.post('/talks/:id/rename', RenameTalk, { redirect: talk => `/pages/talks/${talk.id}` })
+        routes.get('/pages/talks/:id', GetTalk, { html: talk => `<h1>${talk.title}</h1>` })
+        routes.get('/healthz', c => c.text('ok'))
     }
 }
 
@@ -96,14 +98,25 @@ export class LoginRedirect extends ProblemResponder {
 }
 
 export async function visitTheConference(): Promise<string[]> {
-    const provider = new Services()
-        .addSingleton(Talks, Talks)
-        .add(
-            jsonSerializer(),
-            application(app => app.use(Authorization).handle(GetTalk, GetTalkHandler).handle(RenameTalk, RenameTalkHandler)),
-            web(w => w.use(secureHeaders()).authenticateWith(SessionCookie).respondToProblemsWith(LoginRedirect).controller(TalksController)),
-        )
-        .build({ validate: true })
+    const services = new Services()
+    services.addSingleton(Talks)
+    services.add(jsonSerializer())
+    services.add(
+        application(app => {
+            app.use(Authorization)
+            app.handle(GetTalkHandler)
+            app.handle(RenameTalkHandler)
+        }),
+    )
+    services.add(
+        web(w => {
+            w.use(secureHeaders())
+            w.authenticateWith(SessionCookie)
+            w.respondToProblemsWith(LoginRedirect)
+            w.controller(TalksController)
+        }),
+    )
+    const provider = services.build({ validate: true })
 
     // a server serves this fetch; a test calls it in memory
     const client = new TestClient(provider.get(Web).fetch)

@@ -141,6 +141,8 @@ export class TalksController extends Controller {
     registerRoutes(routes: Routes): void {
         routes
             .get('/talks/:id', GetTalk)
+            .get('/talks/:id/page', GetTalk, { html: talk => `<h1>${talk.title}</h1>` })
+            .get('/talks/:id/card', GetTalk, { html: async (talk, request) => `<p>${request.id}: ${talk.title}</p>` })
             .post('/talks/:id/title', RenameTalk)
             .post('/talks/:id/rename', RenameTalk, { redirect: talk => `/talks/${talk.id}` })
             .post('/talks/:id/tagged', TagTalk, { redirect: (_tags, request) => `/talks/${request.id}?tagged`, status: 302 })
