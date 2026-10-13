@@ -9,9 +9,10 @@ without touching it.
 Three goals decide every design question. When two options are otherwise equal, pick the one that serves them
 better.
 
-1. **Nothing happens that the application did not write.** No discovery, no scanning, no patched prototypes,
-   no extension that silently brings another one. Reading the composition of an application tells you what it
-   runs.
+1. **Nothing happens that the application did not write, or that the builder it chose does not document.** No
+   discovery, no scanning, no patched prototypes, no extension that silently brings another one. Reading the
+   composition of an application, and the doc of its builder, tells you what it runs: `WebApplication.builder()`
+   brings the usual defaults and says which; a plain `HostBuilder` brings none.
 2. **Fail early and say why.** A wrong composition fails when the application is built, not on the first
    request, and the error names what is missing or what conflicts.
 3. **The compiler enforces what it can; the runtime enforces the rest.** A rule that is only written down is
@@ -26,7 +27,7 @@ examples, live in the documents it points to.
 |---|---|
 | Write any code | [docs/conventions.md](docs/conventions.md) |
 | Build or change a module | Its design sheet, if `.dev/` exists (see below), then the module's `README.md` |
-| Start an application, or run something with it | [`packages/hosting/README.md`](packages/hosting/README.md) and its canonical example |
+| Start an application, or run something with it | [`packages/node/README.md`](packages/node/README.md) for a web application, [`packages/hosting/README.md`](packages/hosting/README.md) for the host and modules, and their canonical examples |
 | Read configuration | [`packages/config/README.md`](packages/config/README.md) and its canonical example |
 | Register services or write an extension | [The section below](#services-and-extensions), [`packages/di/README.md`](packages/di/README.md) and its canonical example |
 | Write a use case, a handler or a middleware | [`packages/application/README.md`](packages/application/README.md) and its canonical example |
@@ -90,6 +91,9 @@ These are the rules an agent gets wrong by doing what is usual in TypeScript. Th
 - **Builders take a callback that receives the builder**: `talk(t => t.keynote().title('Opening'))`. Every step
   returns `this`, and only the code that passed the callback calls `build()`. **No functions with a typed
   `this`.**
+- **An application is composed with statements, one per line, never with a chain**: a `Module` writes
+  `app.services.addSingleton(Talks, SqlTalks)` and `app.web.controller(TalksController)` on lines of their own. A short
+  chain is fine for a value, such as `talk(t => t.keynote().title('Opening'))`; it is not for a composition.
 - **What is passed as a value is a function that returns an object** (`sql()`, `talk()`); **what has state or
   collaborators is a class** (`Services`, `SqlTalks`). A one-method dependency is still an `abstract class`.
 - **Private fields use `#`**, not `private`. Everything is `readonly` unless it has a reason not to be; a change
