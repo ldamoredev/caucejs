@@ -32,24 +32,30 @@ export class Services {
 
     // The factory overload goes first in each method: an arrow function only gets the type of its resolver from it.
 
-    /** One instance for the whole application. */
+    /**
+     * One instance for the whole application. A class that is its own token is added alone:
+     * `addSingleton(Schedule)`.
+     */
     addSingleton<T>(token: Token<T>, factory: Factory<T>): this
     addSingleton<T, D extends Dependencies>(token: Token<T>, implementation: Injectable<T, D>): this
-    addSingleton(token: Token<unknown>, implementation: StoredClass | Factory<unknown>): this {
+    addSingleton<T, D extends Dependencies>(type: Injectable<T, D> & Token<T>): this
+    addSingleton(token: Token<unknown>, implementation: StoredClass | Factory<unknown> = token as StoredClass): this {
         return this.#add(token, Lifetimes.Singleton, sourceOf(implementation))
     }
 
     /** One instance per scope: per request, or per job. */
     addScoped<T>(token: Token<T>, factory: Factory<T>): this
     addScoped<T, D extends Dependencies>(token: Token<T>, implementation: Injectable<T, D>): this
-    addScoped(token: Token<unknown>, implementation: StoredClass | Factory<unknown>): this {
+    addScoped<T, D extends Dependencies>(type: Injectable<T, D> & Token<T>): this
+    addScoped(token: Token<unknown>, implementation: StoredClass | Factory<unknown> = token as StoredClass): this {
         return this.#add(token, Lifetimes.Scoped, sourceOf(implementation))
     }
 
     /** A new instance every time it is asked for. */
     addTransient<T>(token: Token<T>, factory: Factory<T>): this
     addTransient<T, D extends Dependencies>(token: Token<T>, implementation: Injectable<T, D>): this
-    addTransient(token: Token<unknown>, implementation: StoredClass | Factory<unknown>): this {
+    addTransient<T, D extends Dependencies>(type: Injectable<T, D> & Token<T>): this
+    addTransient(token: Token<unknown>, implementation: StoredClass | Factory<unknown> = token as StoredClass): this {
         return this.#add(token, Lifetimes.Transient, sourceOf(implementation))
     }
 

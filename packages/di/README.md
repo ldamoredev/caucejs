@@ -14,11 +14,11 @@ class SqlTalks extends Talks {
 }
 
 const services = new Services()
-    .add(clock(), ticketing({ capacity: 300 }))
-    .addSingleton(Talks, SqlTalks)
-    .addSingleton(SqlClient, () => new PoolSqlClient(url))
-    .addScoped(CurrentAttendee, CurrentAttendee)
-    .addTransient(SellTicket, SellTicket)
+services.add(clock(), ticketing({ capacity: 300 }))
+services.addSingleton(Talks, SqlTalks)
+services.addSingleton(SqlClient, () => new PoolSqlClient(url))
+services.addScoped(CurrentAttendee)                 // a class that is its own token goes alone
+services.addTransient(SellTicket)
 
 await using provider = services.build({ validate: true })
 await using scope = provider.createScope()
@@ -32,7 +32,7 @@ The canonical extension, to copy: [`examples/ticketing.ts`](examples/ticketing.t
 | | |
 |---|---|
 | `Services` | Where services are added: a class with `inject`, a factory, or an instance. Each token once; `replace` changes one, for tests |
-| Lifetimes | `addSingleton`, `addScoped`, `addTransient` |
+| Lifetimes | `addSingleton`, `addScoped`, `addTransient`: a token and how to build it, or a class alone when it is its own token |
 | `Provider` | Resolves, creates classes that were not added, opens scopes, and disposes its singletons |
 | `Scope` | The services of one request or one job, disposed when it ends |
 | `Scopes` | Opens scopes, for a class that needs one per unit of work. The container provides it: it is never added |

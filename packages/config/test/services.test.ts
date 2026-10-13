@@ -21,6 +21,21 @@ describe('settings in the container', () => {
 
         expect(() => new Services().addInstance(VenueSettings, config.bind(VenueSettings))).toThrow(InvalidSettingsError)
     })
+
+    it('fail with the problems alone, without a stack that points inside Cauce', () => {
+        const config = new Config().add(memory({ venue: { city: 'Rosario', capacity: 'many' } }))
+
+        const error = (() => {
+            try {
+                config.bind(VenueSettings)
+            } catch (thrown) {
+                return thrown as Error
+            }
+            throw new Error('It did not fail')
+        })()
+
+        expect(error.stack).toBe(`InvalidSettingsError: ${error.message}`)
+    })
 })
 
 class VenueSettings extends settings('venue', object({ city: text(), capacity: integer() })) {}

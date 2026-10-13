@@ -12,21 +12,21 @@ pnpm add @caucejs/web
 ```ts
 class TalksController extends Controller {
     registerRoutes(routes: Routes): void {
-        routes
-            .get('/talks/:id', GetTalk)                                                   // a use case
-            .post('/talks/:id/rename', RenameTalk, { redirect: talk => `/talks/${talk.id}` })
-            .get('/pages/talks/:id', async (c, run) =>                                     // written by hand
-                c.html(page(await run(GetTalk, { id: c.req.param('id') }))))
+        routes.get('/talks/:id', GetTalk)                                                  // a use case, as JSON
+        routes.post('/talks/:id/rename', RenameTalk, { redirect: talk => `/talks/${talk.id}` })
+        routes.get('/pages/talks/:id', GetTalk, { html: talk => page(talk) })               // a use case, as a page
+        routes.get('/healthz', c => c.text('ok'))                                          // written by hand
     }
 }
 
-services.add(
-    jsonSerializer(),
-    application(app => app.use(Authorization).handle(GetTalk, GetTalkHandler).handle(RenameTalk, RenameTalkHandler)),
-    web(w => w.use(secureHeaders()).authenticateWith(SessionCookie).controller(TalksController)),
-)
+// in a module of a web application on Node, as statements: see WebApplication in @caucejs/node
+app.useCases.use(Authorization)
+app.useCases.handle(GetTalkHandler)
+app.web.use(secureHeaders())
+app.web.authenticateWith(SessionCookie)
+app.web.controller(TalksController)
 
-const response = await new TestClient(provider.get(Web).fetch).get('/talks/opening')   // in memory
+const response = await new TestClient(app.fetch).get('/talks/opening')   // in memory
 ```
 
 The canonical web, to copy: [`examples/conference-web.ts`](examples/conference-web.ts).
@@ -35,10 +35,10 @@ The canonical web, to copy: [`examples/conference-web.ts`](examples/conference-w
 
 | | |
 |---|---|
-| `web` | The extension: `use` adds Hono middlewares, `controller` a group of routes, `authenticateWith` who makes each request, `status` the status of an error of the application, `respondToProblemsWith` what answers a problem |
+| `web`, `WebBuilder` | The extension, and what `WebApplicationBuilder` exposes as `web`: `use` adds Hono middlewares, `controller` a group of routes, `authenticateWith` who makes each request, `status` the status of an error of the application, `respondToProblemsWith` what answers a problem |
 | `Web` | The web of the application: its `fetch`, and `hono` for what `web` does not cover |
 | `Controller` | A group of routes, built by the container: `registerRoutes(routes)` |
-| `Routes` | `get`, `post`, `put`, `patch`, `delete`: with the class of a request, a route that is a use case; with a function, a route written by hand |
+| `Routes` | `get`, `post`, `put`, `patch`, `delete`: with the class of a request, a route that is a use case, answered as JSON, a redirect or a page; with a function, a route written by hand |
 | `Authenticator` | Turns a request into an `Identity`. `AnonymousAuthenticator` is the one without an application's |
 | `ProblemResponder` | Answers a problem instead of `application/problem+json`, such as an HTML page or a redirect to the login |
 | `UnsupportedMediaTypeError` | A body that is neither JSON nor a form: a 415 |
@@ -58,7 +58,9 @@ The canonical web, to copy: [`examples/conference-web.ts`](examples/conference-w
   that wins in silence. A query name given twice is a list. A body that is not valid JSON, or not an object, is a 400;
   one of another type, a 415. A GET has no body: the fetch standard does not let one be sent.
 - **The result is written by the `JsonSerializer`**, with 200 or the status the route declares, GET included; a use case
-  that answers nothing gives 204. A redirect is 303 unless it says otherwise.
+  that answers nothing gives 204. A redirect is 303 unless it says otherwise. **A page is a use case too**: `{ html }`
+  writes the HTML from the result and the request, so a page that only shows what a query answers is one line, and
+  closed to whoever the query is closed to.
 - **A route written by hand is written inline, in `registerRoutes`.** Extracted to a method, Hono no longer knows its
   path and its parameters lose their types. It runs a use case with `run`, which reads the fields with the request's
   schema and runs it as the request does.

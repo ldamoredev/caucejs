@@ -39,7 +39,8 @@ export class GetTalk extends Query.returning<Talk>().from(z.strictObject({ talkI
     static readonly anonymous = true
 }
 
-export class GetTalkHandler extends Handler<GetTalk> {
+// A handler names its request, so the application adds it alone.
+export class GetTalkHandler extends Handler.of(GetTalk) {
     static readonly inject = [Talks] as const
     readonly #talks: Talks
 
@@ -58,7 +59,7 @@ export class SellTicket extends Command.returning<number>().from(z.strictObject(
     static readonly permissions = ['tickets']
 }
 
-export class SellTicketHandler extends Handler<SellTicket> {
+export class SellTicketHandler extends Handler.of(SellTicket) {
     static readonly inject = [Talks] as const
     readonly #talks: Talks
 
@@ -111,10 +112,17 @@ export class Recording extends Middleware {
 
 export async function runTheBoxOffice(): Promise<string[]> {
     const services = new Services()
-        .addSingleton(Talks, Talks)
-        .addSingleton(Journal, Journal)
-        // the order written is the order they run: recording sees what authorization refuses
-        .add(application(app => app.use(Recording).use(Authorization).handle(GetTalk, GetTalkHandler).handle(SellTicket, SellTicketHandler)))
+    services.addSingleton(Talks)
+    services.addSingleton(Journal)
+    services.add(
+        application(app => {
+            // the order written is the order they run: recording sees what authorization refuses
+            app.use(Recording)
+            app.use(Authorization)
+            app.handle(GetTalkHandler)
+            app.handle(SellTicketHandler)
+        }),
+    )
     await using provider = services.build({ validate: true })
     const useCases = provider.get(UseCases)
 

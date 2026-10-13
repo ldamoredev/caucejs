@@ -13,6 +13,10 @@ export function whatTheCompilerRefuses(routes: Routes): void {
     routes.post('/talks/:id/rename', RenameTalk, { redirect: talk => `/talks/${talk.room}` })
     // @ts-expect-error a status that is not a success
     routes.put('/talks/:id/title', RenameTalk, { status: 404 })
+    // @ts-expect-error a page that reads a field the result does not have
+    routes.get('/talks/:id/page', GetTalk, { html: talk => `<h1>${talk.room}</h1>` })
+    // @ts-expect-error a page that writes something that is not HTML
+    routes.get('/talks/:id/page', GetTalk, { html: talk => talk })
     // @ts-expect-error a redirect with a status that does not redirect
     routes.post('/talks/:id/rename', RenameTalk, { redirect: talk => talk.id, status: 200 })
     routes.get('/pages/:id', c => {

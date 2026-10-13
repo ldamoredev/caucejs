@@ -123,6 +123,9 @@ importers:
 
   packages/node:
     dependencies:
+      '@caucejs/application':
+        specifier: workspace:*
+        version: link:../application
       '@caucejs/base':
         specifier: workspace:*
         version: link:../base
@@ -135,6 +138,9 @@ importers:
       '@caucejs/hosting':
         specifier: workspace:*
         version: link:../hosting
+      '@caucejs/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@caucejs/web':
         specifier: workspace:*
         version: link:../web
@@ -142,12 +148,6 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4(hono@4.13.13)
     devDependencies:
-      '@caucejs/application':
-        specifier: workspace:*
-        version: link:../application
-      '@caucejs/schema':
-        specifier: workspace:*
-        version: link:../schema
       '@caucejs/testing':
         specifier: workspace:*
         version: link:../testing

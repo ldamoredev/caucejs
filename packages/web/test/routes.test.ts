@@ -58,6 +58,17 @@ describe('a route that is a use case', () => {
         response.redirectsTo('/talks/opening?tagged')
     })
 
+    it('writes a page with what the use case answered, when it declares html', async () => {
+        const response = await client.get('/talks/opening/page')
+
+        expect(response.succeeds(200).headers.get('content-type')).toMatch(/^text\/html/)
+        expect(response.text).toBe('<h1>Opening</h1>')
+    })
+
+    it('waits for a page that is written asynchronously, and gives it the request', async () => {
+        expect((await client.get('/talks/opening/card')).succeeds(200).text).toBe('<p>opening: Opening</p>')
+    })
+
     it('takes a name given twice in the query as a list', async () => {
         const response = await client.post('/talks/opening/tags?tags=web&tags=ai')
 

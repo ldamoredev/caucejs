@@ -5,11 +5,13 @@ the reason behind each rule. The examples use the fictitious domain of a confere
 
 ## Extensions
 
-A module adds what it brings to the container through an extension, without the container knowing it.
+A package adds what it brings to the container through an extension, without the container knowing it. A module of
+an application is a class, a `Module` of `@caucejs/hosting`, that adds extensions, services and settings as
+statements.
 
 ```ts
-const services = new Services()
-    .add(pool({ url: 'postgres://localhost/conference' }), sql(), jsonSerializer())
+services.add(pool({ url: 'postgres://localhost/conference' }))
+services.add(sql())
 ```
 
 - **The extension is passed to the registry**: `services.add(sql())`. A free function, `addSql(services)`, reads
@@ -41,6 +43,19 @@ const services = new Services()
   the class instead.
 - **A builder step returns `this`, and only the code that received the callback calls `build()`**, so no builder
   is left unfinished.
+- **A composition is written as statements, not as a chain.** A module of an application, a controller, the use cases
+  and the web are lists of things the application runs, and a list reads one item per line:
+
+  ```ts
+  compose(app: WebApplicationBuilder): void {
+      app.services.addSingleton(Talks, SqlTalks)
+      app.useCases.handle(GetTalkHandler)
+      app.web.controller(TalksController)
+  }
+  ```
+
+  A chain of ten steps hides which one failed in a stack, and which one a diff changed. A value built with a
+  vocabulary, `talk(t => t.keynote().title('Opening'))`, is still a short chain.
 - **A test scenario takes values the same way the container takes extensions**:
 
   ```ts

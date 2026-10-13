@@ -9,22 +9,31 @@ pnpm add @caucejs/hosting
 ```
 
 ```ts
+class Conference extends Module {
+    compose(app: HostBuilder): void {
+        app.addSettings(DoorsSettings)
+        app.services.addSingleton(Journal)
+        app.start(Doors)
+    }
+}
+
 const builder = new HostBuilder({ environment: environmentOf(process.env) })
 builder.config.add(...standardSources(builder.environment))   // @caucejs/node
-builder.services.add(conference(builder.config))
-builder.start(TicketDesk).start(HttpServer)
-
-await using host = builder.build()
+builder.addModule(Conference)
+const host = builder.build()
 await host.run(new ProcessLifetime())                           // @caucejs/node
 ```
 
-The canonical host, to copy: [`examples/conference-host.ts`](examples/conference-host.ts).
+**A web application on Node starts from `WebApplication.builder()`**, in `@caucejs/node`, which brings these defaults
+and the server; this builder is the one without any. The canonical host, to copy:
+[`examples/conference-host.ts`](examples/conference-host.ts).
 
 ## What is in it
 
 | | |
 |---|---|
-| `HostBuilder` | The environment, `config`, `services`, and `start`, which lists what runs with the application |
+| `HostBuilder` | The environment, `config`, `services`, `addModule`, `addSettings`, and `start`, which lists what runs with the application |
+| `Module` | A part of the application, as a class: `compose(app)` adds its settings, services and what starts with it |
 | `Host` | The built application: `start`, `stop`, `run`, and `await using` to stop it |
 | `HostEnvironment` | The name of the environment, injectable. `environmentOf(process.env)` reads `NODE_ENV` |
 | `HostedService` | What starts and stops with the application: a server, a loader, a worker |
@@ -33,16 +42,19 @@ The canonical host, to copy: [`examples/conference-host.ts`](examples/conference
 
 ## Why it is built this way
 
-- **Nothing implicit.** The builder reads no file and adds no service of its own besides `HostEnvironment`. The
-  standard order of the configuration is a function the application calls (`standardSources`), so reading the
-  composition says which files it reads.
+- **This builder brings nothing.** It reads no file and adds no service of its own besides `HostEnvironment`. The
+  defaults live in the builder of a runtime, `WebApplication.builder()` in `@caucejs/node`, which documents them: until
+  12 October every application wrote them by hand, and the plumbing hid what the application was.
 - **The environment never comes from the configuration**, because it decides which settings file to read. It is
   `production` unless the builder is told otherwise, so a deployment that forgets it runs as production. Test
   runners such as Vitest set `NODE_ENV=test`.
-- **A module of the application is an extension of `@caucejs/di`.** There is no second concept: an extension
-  already has an identity, `requires` and fail-if-different. What needs the container built is a hosted service.
+- **A module of the application is a class**, and an extension is what a package adds to the container. A module
+  composes with statements, one per line, may add other modules, and is composed once per class, so two modules can
+  ask for a third. A module of a richer builder, `Module<WebApplicationBuilder>`, does not compile on a plain one.
+- **Settings are bound when the host is built**, with every source added whatever the order of the modules, and a
+  wrong value fails `build()`, before anything starts. What needs the container built is a hosted service.
 - **What starts is named, in order.** `start` takes one class per call, so the compiler checks each `inject`
-  list, and the order of the calls is the order of startup. There is no collection of every hosted service.
+  list, and the order of the statements is the order of startup. There is no collection of every hosted service.
 - **What needs an `await` to start goes here.** The container has no async factories: loading a cache or opening
   a server is the `start` of a hosted service.
 - **The container is validated in every environment.** The validation builds nothing, so it costs nothing at
