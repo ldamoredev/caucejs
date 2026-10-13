@@ -15,6 +15,10 @@ export function whatTheCompilerRefuses(services: Services): void {
     services.addSingleton(Talks, () => new FixedClock())
     // @ts-expect-error a factory that passes the arguments in another order
     services.addSingleton(Talks, resolver => new SqlTalks(resolver.get(Clock), resolver.get(SqlClient)))
+    // @ts-expect-error a contract alone: there is nothing to build
+    services.addScoped(Talks)
+    // @ts-expect-error a class alone whose inject list is in another order than its constructor
+    services.addTransient(WrongOrder)
 }
 
 describe('the types', () => {

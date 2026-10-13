@@ -22,6 +22,18 @@ describe('adding a service', () => {
         expect(log).toEqual(['open pool', 'build talks'])
     })
 
+    it('takes a class alone when it is its own token', () => {
+        const provider = new Services()
+            .addSingleton(FixedClock)
+            .addSingleton(SqlClient, () => new FakeSqlClient('pool'))
+            .addSingleton(Clock, FixedClock)
+            .addTransient(SqlTalks)
+            .build()
+
+        expect(provider.get(FixedClock)).toBe(provider.get(FixedClock))
+        expect(provider.get(SqlTalks)).not.toBe(provider.get(SqlTalks))
+    })
+
     it('fails when the same token is added twice', () => {
         const services = new Services().addSingleton(Clock, FixedClock)
 
