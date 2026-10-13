@@ -1,5 +1,17 @@
 # @caucejs/application
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22](https://github.com/ldamoredev/caucejs/pull/22) [`83d1c3c`](https://github.com/ldamoredev/caucejs/commit/83d1c3c7328136bb1e3a63cf234279e69dafde33) Thanks [@ldamoredev](https://github.com/ldamoredev)! - `Handler.of(GetTalk)` builds a handler that names its request, so it is added alone: `app.handle(GetTalkHandler)`. The pair `handle(GetTalk, GetTalkHandler)` still works.
+
+### Patch Changes
+
+- Updated dependencies [[`d76b129`](https://github.com/ldamoredev/caucejs/commit/d76b129e807391d26bf8f83d2335871f5e38e1ec)]:
+  - @caucejs/di@0.7.0
+  - @caucejs/base@0.7.0
+
 ## 0.6.0
 
 ### Patch Changes

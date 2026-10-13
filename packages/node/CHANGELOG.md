@@ -1,5 +1,22 @@
 # @caucejs/node
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22](https://github.com/ldamoredev/caucejs/pull/22) [`878e9f5`](https://github.com/ldamoredev/caucejs/commit/878e9f5f0f9288ad2f05d76230e94bb3b5d74192) Thanks [@ldamoredev](https://github.com/ldamoredev)! - `WebApplication.builder()` starts a web application with the usual defaults: the environment from `NODE_ENV`, the standard sources with `PORT`, the serializer, the use cases, the web and the server, started last. `run()` says where it listens and stops on `SIGINT` or `SIGTERM`.
+
+### Patch Changes
+
+- Updated dependencies [[`83d1c3c`](https://github.com/ldamoredev/caucejs/commit/83d1c3c7328136bb1e3a63cf234279e69dafde33), [`ddb92f3`](https://github.com/ldamoredev/caucejs/commit/ddb92f3b1e92b6326a13368bed71e4567328ba84), [`d76b129`](https://github.com/ldamoredev/caucejs/commit/d76b129e807391d26bf8f83d2335871f5e38e1ec), [`eb3fee3`](https://github.com/ldamoredev/caucejs/commit/eb3fee3dc58e732ea23bbd305b6e06429e21502c), [`4f9a9f7`](https://github.com/ldamoredev/caucejs/commit/4f9a9f7f5aaeaa645dce5c306862e37a5177c461)]:
+  - @caucejs/application@0.7.0
+  - @caucejs/config@0.7.0
+  - @caucejs/di@0.7.0
+  - @caucejs/hosting@0.7.0
+  - @caucejs/web@0.7.0
+  - @caucejs/schema@0.7.0
+  - @caucejs/base@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

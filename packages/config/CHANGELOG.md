@@ -1,5 +1,16 @@
 # @caucejs/config
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22](https://github.com/ldamoredev/caucejs/pull/22) [`ddb92f3`](https://github.com/ldamoredev/caucejs/commit/ddb92f3b1e92b6326a13368bed71e4567328ba84) Thanks [@ldamoredev](https://github.com/ldamoredev)! - `InvalidSettingsError` has no stack: the mistake is in the environment, so a process that ends on it prints the problems alone.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.7.0
+
 ## 0.6.0
 
 ### Patch Changes
