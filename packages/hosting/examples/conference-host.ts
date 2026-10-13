@@ -1,9 +1,9 @@
-// The canonical host: copy its shape when an application starts. In production it runs with ProcessLifetime and
-// standardSources, from @caucejs/node; this one stops by hand so that it can run in a test.
-import { memory, settings, type Config, type StandardSchemaV1 } from '@caucejs/config'
-import type { Extension, Services } from '@caucejs/di'
+// The canonical host: copy its shape when an application starts without a runtime builder. A web application on Node
+// starts from WebApplication.builder(), in @caucejs/node, which brings the usual defaults. This one stops by hand so
+// that it can run in a test.
+import { memory, settings, type StandardSchemaV1 } from '@caucejs/config'
 
-import { HostBuilder, HostedService, ManualLifetime } from '../src/index.js'
+import { HostBuilder, HostedService, ManualLifetime, Module } from '../src/index.js'
 
 type DoorsOptions = { readonly opensAt: string }
 
@@ -46,24 +46,21 @@ export class Doors extends HostedService {
     }
 }
 
-// A module of the application is an extension of di: it receives the configuration it binds.
-const conferenceId = Symbol('conference')
-
-function conference(config: Config): Extension {
-    return {
-        id: conferenceId,
-        options: undefined,
-        requires: [],
-        register: (services: Services) => services.addInstance(DoorsSettings, config.bind(DoorsSettings)).addInstance(Journal, new Journal()),
+// A module of the application is a class: compose adds its settings, its services and what starts with it, one
+// statement per line.
+export class Conference extends Module {
+    compose(app: HostBuilder): void {
+        app.addSettings(DoorsSettings)
+        app.services.addSingleton(Journal)
+        app.start(Doors)
     }
 }
 
 export async function holdConference(): Promise<string[]> {
     const builder = new HostBuilder({ environment: 'test' })
-    // Nothing is read that the application does not add: in production, ...standardSources(builder.environment).
+    // A plain builder reads nothing the application does not add: in production, ...standardSources(builder.environment).
     builder.config.add(memory({ doors: { opensAt: '09:00' } }))
-    builder.services.add(conference(builder.config))
-    builder.start(Doors)
+    builder.addModule(Conference)
 
     const lifetime = new ManualLifetime()
     await using host = builder.build()
