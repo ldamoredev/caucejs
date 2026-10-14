@@ -1,0 +1,8 @@
+{
+  "extends": "@caucejs/typescript-config/base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "types": []
+  },
+  "include": ["src", "test", "examples", "vitest.config.ts"]
+}
