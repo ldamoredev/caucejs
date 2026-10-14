@@ -17,7 +17,8 @@
       "@caucejs/testing",
       "@caucejs/application",
       "@caucejs/schema",
-      "@caucejs/web"
+      "@caucejs/web",
+      "@caucejs/http-client"
     ]
   ],
   "linked": [],
