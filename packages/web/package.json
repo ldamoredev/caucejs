@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/web",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "The web of Cauce, on Hono: routes that are use cases, declared with the class of their request; one DI scope and one identity per request; errors as problem details; and the fetch of the application, for a server or a test.",
   "license": "MIT",
   "type": "module",
