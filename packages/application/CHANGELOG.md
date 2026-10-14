@@ -1,5 +1,13 @@
 # @caucejs/application
 
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.8.0
+  - @caucejs/di@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes

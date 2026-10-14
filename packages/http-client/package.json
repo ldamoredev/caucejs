@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/http-client",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "The HTTP client of Cauce: the fetch standard, injected by the container, with a base, a timeout and typed errors, and replaced in a test without touching globalThis.",
   "license": "MIT",
   "type": "module",

@@ -1,5 +1,18 @@
 # @caucejs/node
 
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.8.0
+  - @caucejs/di@0.8.0
+  - @caucejs/config@0.8.0
+  - @caucejs/hosting@0.8.0
+  - @caucejs/application@0.8.0
+  - @caucejs/schema@0.8.0
+  - @caucejs/web@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes
