@@ -1,5 +1,6 @@
 import { Command, Handler, Identity, Middleware, Query, type ExecutionContext, type Next, type Request } from '@caucejs/application'
 import { DomainError, NotFoundError } from '@caucejs/base'
+import { ValidationError } from '@caucejs/schema'
 import * as z from 'zod'
 
 export type Talk = { readonly id: string; readonly title: string; readonly seats: number }
@@ -113,6 +114,17 @@ export class RefuseQuietly extends Command.from(z.strictObject({})) {
 export class RefuseQuietlyHandler extends Handler.of(RefuseQuietly) {
     async execute(): Promise<void> {
         throw new QuietRefusalError()
+    }
+}
+
+// Reads something of its own, and finds it wrong.
+export class ImportProgram extends Command.from(z.strictObject({})) {
+    static readonly anonymous = true
+}
+
+export class ImportProgramHandler extends Handler.of(ImportProgram) {
+    async execute(): Promise<void> {
+        throw new ValidationError([{ path: 'talks.0.title', message: 'Required' }])
     }
 }
 

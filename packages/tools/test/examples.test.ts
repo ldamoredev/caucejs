@@ -11,6 +11,7 @@ describe('the canonical tools', () => {
             '0',
             'failed: The talk has no seats left',
             'failed: The input is not valid: talkId: Invalid input: expected string, received undefined; Unrecognized key: "talk"',
+            'failed: There is no talk keynote',
         ])
     })
 })

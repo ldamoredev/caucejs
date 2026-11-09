@@ -13,6 +13,8 @@ import {
     GetTalk,
     GetTalkHandler,
     GetVenue,
+    ImportProgram,
+    ImportProgramHandler,
     Journal,
     OpenDoors,
     OpenDoorsHandler,
@@ -134,6 +136,16 @@ describe('the tool runner', () => {
             expect(journal.entries).toEqual([])
         })
 
+        it('with every issue of what the use case read and found wrong, as web answers it with a 400', async () => {
+            const importProgram = tool(ImportProgram, { name: 'import_program', description: 'Imports the program' })
+
+            expect(await call(importProgram, {})).toEqual({
+                ok: false,
+                message: 'The input is not valid: talks.0.title: Required',
+                error: expect.any(ValidationError),
+            })
+        })
+
         it('with the message of an error of the domain', async () => {
             expect(await call(sellTickets, { talkId: 'closing', seats: 1 }, new BoxOffice())).toEqual({
                 ok: false,
@@ -228,6 +240,7 @@ describe('the tool runner', () => {
                 app.handle(OpenDoorsHandler)
                 app.handle(DimTheLightsHandler)
                 app.handle(RefuseQuietlyHandler)
+                app.handle(ImportProgramHandler)
             }),
         )
         provider = services.build({ validate: true })

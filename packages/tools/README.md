@@ -85,7 +85,7 @@ The canonical tools, to copy: [`examples/conference-tools.ts`](examples/conferen
   serializer writes; whoever wants to say "Done." looks at `value`.
 - **`tools()` declares no `requires`.** The runner asks for `UseCases` and the `JsonSerializer` in `inject`, and a
   container built with `validate`, as a web application always is, names whichever is missing:
-  `ToolRunner needs UseCases, which was never added`. A web application adds both without the extensions that add
-  them elsewhere, so requiring those extensions would fail where nothing is missing.
+  `ToolRunner needs UseCases, which was never added`. A web application builds its `UseCases` without the
+  `application()` extension, so requiring that extension would fail where nothing is missing.
 - **The scope and the context come from whoever calls**, as with `UseCases.execute`: a server of MCP passes the scope
   of the request and the identity of its token, and a model passes the ones of the use case that asked it.

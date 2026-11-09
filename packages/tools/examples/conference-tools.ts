@@ -2,7 +2,7 @@
 // server of MCP or a model calls them, with what the caller reads when a call fails. Nothing here talks to a model:
 // `@caucejs/mcp` and `@caucejs/ai` take these same tools.
 import { application, Authorization, Command, ExecutionContext, Handler, Identity, Query } from '@caucejs/application'
-import { DomainError } from '@caucejs/base'
+import { DomainError, NotFoundError } from '@caucejs/base'
 import { Services } from '@caucejs/di'
 import { jsonSerializer } from '@caucejs/schema'
 import * as z from 'zod'
@@ -16,7 +16,8 @@ export class Talks {
 
     get(id: string): Talk {
         const talk = this.#talks.get(id)
-        if (!talk) throw new Error(`No talk ${id}`)
+        // an error of the domain, so the caller of a tool reads it: a plain Error would read as "Tool execution failed"
+        if (!talk) throw new NotFoundError(`There is no talk ${id}`)
         return talk
     }
 
@@ -111,9 +112,10 @@ export async function callTheTools(): Promise<string[]> {
     // what fails comes back, for the caller to read: the domain says why, and so does an input that does not pass
     const soldOut = await runner.call(sellTicket, { talkId: 'opening' }, boxOffice)
     const wrong = await runner.call(sellTicket, { talk: 'opening' }, boxOffice)
+    const missing = await runner.call(getTalk, { talkId: 'keynote' }, { scope })
 
     return [
         ...described.map(({ name, readOnly, inputSchema }) => `${name}${readOnly ? ', read only,' : ''} takes ${JSON.stringify(inputSchema['required'])}`),
-        ...[talk, sold, soldOut, wrong].map(outcome => (outcome.ok ? outcome.json : `failed: ${outcome.message}`)),
+        ...[talk, sold, soldOut, wrong, missing].map(outcome => (outcome.ok ? outcome.json : `failed: ${outcome.message}`)),
     ]
 }
