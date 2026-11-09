@@ -87,8 +87,11 @@ describe('ai()', () => {
         expect(scope.get(Ai)).toBeInstanceOf(DefaultAi)
     })
 
-    // The limit of the factory of Ai: the resolver it keeps carries the path it was built on, so a tool whose handler
-    // asks for Ai finds a cycle that is not there. When di forgets that path, this test fails and the README changes.
+    // The limit of the factory of Ai: the resolver it keeps carries the path Ai was built on, and the container checks
+    // that path before the services the scope already built. So a tool whose handler, or anything it injects, asks for
+    // a service on that path finds a cycle that is not there: Ai itself, or anything between the handler that asked
+    // and Ai, even built already and even when the tool never asks for Ai. When di forgets that path, these two tests
+    // fail and the README changes.
     it('cannot run a tool whose handler asks for Ai itself', async () => {
         const model = new ScriptedModel([toolCall('summarize', {}), text('No summary.')])
         const provider = withSummarize(model).build({ validate: true })
@@ -97,6 +100,18 @@ describe('ai()', () => {
         await scope.get(Ai).run({ model: 'claude-haiku-5-5', messages: [userMessage('Summarize.')], tools: [summarize], context: ExecutionContext.of(new Attendee()) })
 
         expect(scope.get(Journal).entries).toEqual(['Summarize as attendee', 'Summarize failed with CircularDependencyError'])
+        expect(model.requests[1]?.messages.at(-1)?.content).toEqual([{ type: 'toolResult', toolCallId: 'call_1', content: 'Tool execution failed', isError: true }])
+    })
+
+    it('cannot run a tool whose handler asks for a service on the path Ai was built on, though the scope built it', async () => {
+        const model = new ScriptedModel([toolCall('read_notes', {}), text('No notes.')])
+        const provider = withConversation(model).build({ validate: true })
+        await using scope = provider.createScope()
+
+        const answer = await provider.get(UseCases).execute(new Ask({ question: 'What did I note?' }), { scope, context: ExecutionContext.of(new Attendee()) })
+
+        expect(answer).toBe('No notes.')
+        expect(scope.get(Journal).entries).toEqual(['Ask as attendee', 'ReadNotes as attendee', 'ReadNotes failed with CircularDependencyError'])
         expect(model.requests[1]?.messages.at(-1)?.content).toEqual([{ type: 'toolResult', toolCallId: 'call_1', content: 'Tool execution failed', isError: true }])
     })
 })
@@ -174,6 +189,72 @@ function withSummarize(model: Model): Services {
         application(app => {
             app.use(Journaling)
             app.handle(SummarizeHandler)
+        }),
+    )
+    return services
+}
+
+// One for each scope, on the path from the handler that asks to Ai: AskHandler -> Conversation -> Ai.
+class Conversation {
+    static readonly inject = [Ai] as const
+    readonly #ai: Ai
+
+    constructor(ai: Ai) {
+        this.#ai = ai
+    }
+
+    async ask(question: string, context: ExecutionContext): Promise<string> {
+        const result = await this.#ai.run({ model: 'claude-haiku-5-5', messages: [userMessage(question)], tools: [readNotes], context })
+        return result.text
+    }
+}
+
+class Ask extends Query.returning<string>().from(z.strictObject({ question: z.string().min(1) })) {}
+
+class AskHandler extends Handler.of(Ask) {
+    static readonly inject = [Conversation] as const
+    readonly #conversation: Conversation
+
+    constructor(conversation: Conversation) {
+        super()
+        this.#conversation = conversation
+    }
+
+    async execute(request: Ask, context: ExecutionContext): Promise<string> {
+        return this.#conversation.ask(request.question, context)
+    }
+}
+
+class ReadNotes extends Query.returning<string>().from(z.strictObject({})) {}
+
+// It never asks for Ai: only for the Conversation the scope already built.
+class ReadNotesHandler extends Handler.of(ReadNotes) {
+    static readonly inject = [Conversation] as const
+
+    constructor(_conversation: Conversation) {
+        super()
+    }
+
+    async execute(): Promise<string> {
+        return 'The notes.'
+    }
+}
+
+const readNotes = tool(ReadNotes, { name: 'read_notes', description: 'The notes of whoever asks' })
+
+function withConversation(model: Model): Services {
+    const services = new Services()
+    services.addScoped(Journal)
+    services.addScoped(Conversation)
+    services.addInstance(Model, model)
+    services.add(jsonSerializer())
+    services.add(tools())
+    services.add(ai())
+    services.add(
+        application(app => {
+            app.use(Journaling)
+            app.handle(AskHandler)
+            app.handle(ReadNotesHandler)
         }),
     )
     return services
