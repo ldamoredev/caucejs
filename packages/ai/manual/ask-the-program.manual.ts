@@ -104,16 +104,20 @@ services.add(
 services.replace(Model, resolver => new TimedModel(new AnthropicModel(resolver.get(HttpClient), resolver.get(AnthropicSettings))))
 const provider = services.build({ validate: true })
 const timed = provider.get(Model) as TimedModel
+// The call that goes straight through the HttpClient, which TimedModel does not see.
+const direct: { readonly ms: number; readonly usage: Usage }[] = []
 const system = 'You answer questions about the program of the conference with the tools you have, and name the talk of each answer.'
 
 describe('a run against Anthropic', () => {
     afterAll(() => {
-        const spent = timed.calls.map(call => call.response?.usage).filter(usage => usage !== undefined)
+        const spent = [...timed.calls.flatMap(call => (call.response === null ? [] : [call.response.usage])), ...direct.map(call => call.usage)]
         const input = spent.reduce((total, usage) => total + (usage.inputTokens ?? 0), 0)
         const output = spent.reduce((total, usage) => total + (usage.outputTokens ?? 0), 0)
         const cost = (input * price.input + output * price.output) / 1_000_000
-        console.log(`\n${timed.calls.length} calls, ${input} tokens in and ${output} out, about ${cost.toFixed(5)} USD at the prices of this file`)
-        console.log(`the slowest call took ${Math.max(...timed.calls.map(call => call.ms))} ms`)
+        const calls = timed.calls.length + direct.length
+        // a call that failed reports nothing, and a timeout may still have been charged
+        console.log(`\n${calls} calls, ${input} tokens in and ${output} out, about ${cost.toFixed(5)} USD at the prices of this file, the direct call included`)
+        console.log(`the slowest call took ${Math.max(...timed.calls.map(call => call.ms), ...direct.map(call => call.ms))} ms`)
     })
 
     it('answers with the tools it needs', async () => {
@@ -155,16 +159,25 @@ describe('a run against Anthropic', () => {
             headers: { authorization: `Bearer ${settings.apiKey}`, 'anthropic-version': settings.version },
         })
         const start = performance.now()
-        const response = await http.post('/v1/messages', {
-            json: {
-                model,
-                max_tokens: 64,
-                messages: [{ role: 'user', content: 'Say hello.' }],
-                tools: [{ name: 'get_talk', description: 'A talk of the conference, by its id', input_schema: inputSchema }],
-            },
-        })
-        const type = response.ok ? '' : (JSON.parse(response.text) as { error?: { type?: string } }).error?.type
-        console.log(`with $schema ${String(inputSchema['$schema'])}: ${response.status} ${type ?? ''} in ${Math.round(performance.now() - start)} ms`)
+        try {
+            const response = await http.post('/v1/messages', {
+                json: {
+                    model,
+                    max_tokens: 64,
+                    messages: [{ role: 'user', content: 'Say hello.' }],
+                    tools: [{ name: 'get_talk', description: 'A talk of the conference, by its id', input_schema: inputSchema }],
+                },
+            })
+            const ms = Math.round(performance.now() - start)
+            const body = parsed(response.text)
+            if (response.ok) direct.push({ ms, usage: usageOf(body['usage']) })
+            const type = response.ok ? '' : ` ${String(record(body['error'])['type'] ?? '')}`
+            const requestId = response.headers.get('request-id')
+            console.log(`with $schema ${String(inputSchema['$schema'])}: ${response.status}${type}${requestId === null ? '' : ` (request ${requestId})`} in ${ms} ms`)
+        } catch (error) {
+            // Only its name: an error of the client with no answer keeps the request, with the key in its headers.
+            console.log(`with $schema ${String(inputSchema['$schema'])}: no answer, ${(error as Error).name}`)
+        }
     })
 })
 
@@ -192,4 +205,31 @@ function described(call: Call): string {
 
 function tokens(usage: Usage): string {
     return `${usage.inputTokens} in (${usage.cacheReadTokens} read from the cache, ${usage.cacheWriteTokens} written), ${usage.outputTokens} out`
+}
+
+// What the answer said it spent, read as AnthropicModel reads it: the input is the three of them.
+function usageOf(value: unknown): Usage {
+    const usage = record(value)
+    const tokens = (field: string) => (typeof usage[field] === 'number' ? usage[field] : null)
+    const input = tokens('input_tokens')
+    const read = tokens('cache_read_input_tokens')
+    const written = tokens('cache_creation_input_tokens')
+    return {
+        inputTokens: input === null ? null : input + (read ?? 0) + (written ?? 0),
+        outputTokens: tokens('output_tokens'),
+        cacheReadTokens: read,
+        cacheWriteTokens: written,
+    }
+}
+
+function parsed(text: string): Record<string, unknown> {
+    try {
+        return record(JSON.parse(text) as unknown)
+    } catch {
+        return {}
+    }
+}
+
+function record(value: unknown): Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value) ? (value as Record<string, unknown>) : {}
 }
