@@ -64,8 +64,8 @@ services.replace(HttpClient, () => new FetchHttpClient({ fetch: fakeAnthropic })
   provider's names stay inside `AnthropicModel`. A `ModelTool` has the first three fields of the `ToolDescription` of
   `@caucejs/tools`, with the same names and types, so a described use case is passed as it is.
 - **It sends only what the request says.** The model, 1024 tokens unless it says otherwise, the system, the messages
-  and the tools. No temperature, no tool choice, no cache, no strict tools: the version `2026-10-21` refuses the first
-  ones, and nothing asks for the others yet. `$schema` is left out of each input schema, on a copy: the schema it was
+  and the tools. No `temperature`, `top_p` or `top_k`, which the version `2026-10-21` refuses, and no tool choice, no
+  cache and no strict tools, which nothing asks for yet. `$schema` is left out of each input schema, on a copy: the schema it was
   given is shared. The results of the tools go first in the message that answers them, as the API asks.
 - **The version is a setting**, `2026-10-21` by default, so moving to the next one is a change of configuration that
   the tests of the application see.

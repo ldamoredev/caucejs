@@ -95,7 +95,8 @@ function secondsOf(header: string | null): number | null {
 function errorTypeOf(text: string): string | null {
     const body = parsed(text)
     if (!isRecord(body) || !isRecord(body.error)) return null
-    return typeof body.error.type === 'string' ? body.error.type : null
+    // a kind of error is a name; anything else in that field could be text, and is not carried
+    return typeof body.error.type === 'string' && isName(body.error.type) ? body.error.type : null
 }
 
 function parsed(text: string): unknown {
@@ -108,7 +109,11 @@ function parsed(text: string): unknown {
 
 // The type of a block is a name the API gives, not content, but it is still cut short and kept to a name.
 function quoted(type: string): string {
-    return /^[a-z0-9_]{1,64}$/i.test(type) ? type : 'a type that is not a name'
+    return isName(type) ? type : 'a type that is not a name'
+}
+
+function isName(text: string): boolean {
+    return /^[a-z0-9_]{1,64}$/i.test(text)
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

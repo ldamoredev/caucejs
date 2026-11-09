@@ -285,6 +285,14 @@ describe('what fails', () => {
         expect([(error as ModelRequestError).type, error.message]).toEqual([null, 'The model refused the request with 400'])
     })
 
+    it('leaves out a kind of error that is not a name', async () => {
+        server.answering(() => Response.json({ type: 'error', error: { type: `invalid: ${question}` } }, { status: 400 }))
+
+        const error = await rejection(model.call(asking()))
+
+        expect([(error as ModelRequestError).type, error.message]).toEqual([null, 'The model refused the request with 400'])
+    })
+
     it('throws a timeout error after 120 seconds, whatever the timeout of the client', async () => {
         vi.useFakeTimers()
         server.answering(hanging)
