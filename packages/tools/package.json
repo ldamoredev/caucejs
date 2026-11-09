@@ -1,0 +1,50 @@
+{
+  "name": "@caucejs/tools",
+  "version": "0.8.0",
+  "description": "The tools of Cauce: a use case described once as a tool, read with the JSON serializer and executed through every middleware, for a model and for an MCP server.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/tools"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/tools#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@caucejs/application": "workspace:*",
+    "@caucejs/base": "workspace:*",
+    "@caucejs/di": "workspace:*",
+    "@caucejs/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@caucejs/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "^4.6.5"
+  }
+}
