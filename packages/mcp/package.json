@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/mcp",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "The server of MCP of Cauce: the tools of an application over HTTP, on the official SDK, stateless and with JSON only, behind an authenticator of its own, and run through every middleware.",
   "license": "MIT",
   "type": "module",
