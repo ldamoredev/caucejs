@@ -1,13 +1,15 @@
-import { NotAuthenticatedError, type ExecutionContext } from '@caucejs/application'
+import { NotAuthenticatedError, type ExecutionContext, type Identity } from '@caucejs/application'
 import { CauceError } from '@caucejs/base'
 import type { Resolver } from '@caucejs/di'
 import type { ToolDescription, ToolOutcome, ToolRunner, UseCaseTool } from '@caucejs/tools'
 import type { Authenticator, RequestState } from '@caucejs/web'
 import {
     createMcpHandler,
+    DEFAULT_MAX_REQUEST_BODY_SIZE,
     fromJsonSchema,
     isLegacyRequest,
     McpServer,
+    readRequestBody,
     WebStandardStreamableHTTPServerTransport,
     type CallToolResult,
     type JsonSchemaValidator,
@@ -16,7 +18,7 @@ import {
     type StandardSchemaWithJSON,
 } from '@modelcontextprotocol/server'
 
-import { forbidden, methodNotAllowed, methodNotFound, unauthorized } from './responses.js'
+import { forbidden, methodNotAllowed, methodNotFound, payloadTooLarge, unauthorized, unreadableBody } from './responses.js'
 
 // The runtime's console: this package builds without the types of any runtime, and every runtime has one.
 declare const console: { error(...values: unknown[]): void }
@@ -77,7 +79,8 @@ export class Endpoint {
     }
 
     async serve(request: Request, state: RequestState): Promise<Response> {
-        const identity = await this.#options.authenticator.authenticate(request)
+        const identity = await this.#identityOf(request)
+        if (!identity) return unauthorized()
         if (!this.#options.anonymous && !identity.isAuthenticated) return unauthorized()
         const { permissions } = this.#options
         if (permissions.length > 0 && !permissions.some(permission => identity.can(permission))) return forbidden()
@@ -88,9 +91,20 @@ export class Endpoint {
         return call.unauthenticated ? unauthorized() : response
     }
 
+    // A token that says something can still be refused by throwing; that is a 401 of the endpoint too, never a problem
+    // that the ProblemResponder of the application turns into a redirect to its login. Anything else is a failure.
+    async #identityOf(request: Request): Promise<Identity | null> {
+        try {
+            return await this.#options.authenticator.authenticate(request)
+        } catch (error) {
+            if (error instanceof NotAuthenticatedError) return null
+            throw error
+        }
+    }
+
     async #modernOf(request: Request, call: Call): Promise<Response> {
         // the revision 2026-07-28 names the method in Mcp-Method, and the SDK refuses a body that names another one
-        if (request.headers.get('mcp-method')?.trim() === listen) return methodNotFound(await idOf(request))
+        if (request.headers.get('mcp-method')?.trim() === listen) return refusedListen(request)
         this.#calls.set(request, call)
         return this.#modern.fetch(request)
     }
@@ -152,9 +166,17 @@ function resultOf(outcome: ToolOutcome): CallToolResult {
     return { content: [{ type: 'text', text: outcome.json }], structuredContent: isObject(written) ? written : { result: written } }
 }
 
-async function idOf(request: Request): Promise<unknown> {
+// The body is read for its id under the limit of the SDK, so a body over it is a 413 whatever its method.
+async function refusedListen(request: Request): Promise<Response> {
+    const read = await readRequestBody(request, DEFAULT_MAX_REQUEST_BODY_SIZE).catch(() => null)
+    if (read === null) return unreadableBody()
+    if (read.tooLarge) return payloadTooLarge(DEFAULT_MAX_REQUEST_BODY_SIZE)
+    return methodNotFound(idOf(read.text))
+}
+
+function idOf(text: string): unknown {
     try {
-        const body: unknown = await request.json()
+        const body: unknown = JSON.parse(text)
         return isObject(body) && (typeof body['id'] === 'string' || typeof body['id'] === 'number') ? body['id'] : null
     } catch {
         return null

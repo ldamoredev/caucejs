@@ -6,6 +6,7 @@ import {
     Handler,
     Identity,
     Middleware,
+    NotAuthenticatedError,
     Query,
     UseCases,
     type ExecutionContext,
@@ -218,6 +219,9 @@ export class BoxOfficeTokens extends Authenticator {
         const token = request.headers.get('authorization')?.replace(/^Bearer /, '') ?? new URL(request.url).pathname.split('/').at(-1)
         if (token === 'box-office') return new BoxOffice()
         if (token === 'usher') return new Usher()
+        // a token that says something can be refused by throwing, and the vault behind it can fail
+        if (token === 'expired') throw new NotAuthenticatedError()
+        if (token === 'broken') throw new Error('The vault of tokens is down')
         return new AnonymousIdentity()
     }
 }
@@ -310,6 +314,30 @@ export function clientOf(provider: Provider): TestClient {
         headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': '2025-11-25' },
     })
 }
+
+/** What a client of one revision sends for a call to a tool: the headers and the body. */
+export type Revision = {
+    readonly name: string
+    readonly call: (name: string, input: unknown) => { readonly headers: Record<string, string>; readonly json: unknown }
+}
+
+const meta = {
+    'io.modelcontextprotocol/protocolVersion': '2026-07-28',
+    'io.modelcontextprotocol/clientInfo': { name: 'box office', version: '1.0.0' },
+    'io.modelcontextprotocol/clientCapabilities': {},
+}
+
+/** Both revisions the endpoint speaks. 2026-07-28 names the method and the tool in headers, and its version in _meta. */
+export const revisions: readonly Revision[] = [
+    { name: '2025-11-25', call: (name, input) => ({ headers: {}, json: callOf(name, input) }) },
+    {
+        name: '2026-07-28',
+        call: (name, input) => ({
+            headers: { 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'tools/call', 'mcp-name': name },
+            json: rpc('tools/call', { name, arguments: input, _meta: meta }),
+        }),
+    },
+]
 
 let ids = 0
 

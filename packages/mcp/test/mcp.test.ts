@@ -15,8 +15,10 @@ import {
     getTalk,
     GetTalk,
     Journal,
+    revisions,
     rpc,
     scheduleTalk,
+    type Revision,
     sellTicket,
 } from './support/conference.js'
 
@@ -150,19 +152,49 @@ describe('a server of MCP', () => {
             expect(response.headers.get('content-type')).toBe('application/json')
         })
 
-        it('prints nothing of what it receives or answers', async () => {
+        it.each(revisions)('prints nothing of what it receives or answers, in $name', async revision => {
             // the SDK warns once, when the handler is created with responseMode: 'json'; that is not what this is about
             const provider = conference()
             const client = boxOffice(provider)
             provider.get(Web)
             const printed = (['log', 'info', 'warn', 'error', 'debug'] as const).map(level => vi.spyOn(console, level).mockImplementation(() => {}))
 
-            await call(client, 'get_talk', { talkId: 'opening' })
-            await call(client, 'sell_ticket', { talkId: '', secret: 'card 4242' })
-            const notJson = await client.post('/mcp', { body: '{"jsonrpc": "2.0", "secret": "card 4242"' })
+            const talk = await callIn(client, revision, 'get_talk', { talkId: 'opening' })
+            const wrong = await callIn(client, revision, 'sell_ticket', { talkId: '', secret: 'card 4242' })
+            const { headers } = revision.call('get_talk', {})
+            const notJson = await client.post('/mcp', { headers, body: '{"jsonrpc": "2.0", "secret": "card 4242"' })
 
+            expect(talk.structuredContent).toMatchObject({ title: 'Opening' })
+            expect(wrong.isError).toBe(true)
             notJson.failsWith(400)
             for (const spy of printed) expect(spy).not.toHaveBeenCalled()
+        })
+
+        it('refuses a subscription, which would be a stream, with the error of JSON-RPC for a method not found', async () => {
+            const response = await boxOffice().post('/mcp', {
+                headers: { 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'subscriptions/listen' },
+                json: { jsonrpc: '2.0', id: 'listen:0', method: 'subscriptions/listen', params: { notifications: { toolsListChanged: true } } },
+            })
+
+            response.succeeds(200)
+            expect(response.headers.get('content-type')).toBe('application/json')
+            expect(response.json()).toEqual({ jsonrpc: '2.0', id: 'listen:0', error: { code: -32601, message: 'Method not found' } })
+        })
+
+        it.each(['subscriptions/listen', 'tools/list'])('answers 413 to a body over 4 MiB, %s included', async method => {
+            const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method, params: { padding: 'x'.repeat(6 * 1024 * 1024) } })
+
+            const response = await boxOffice().post('/mcp', {
+                headers: { 'mcp-protocol-version': '2026-07-28', 'mcp-method': method },
+                body,
+            })
+
+            response.failsWith(413)
+            expect(response.json()).toEqual({
+                jsonrpc: '2.0',
+                error: { code: -32000, message: 'Payload Too Large: Request body must not exceed 4194304 bytes' },
+                id: null,
+            })
         })
     })
 
@@ -205,11 +237,31 @@ describe('a server of MCP', () => {
             expect(await call(usher, 'sell_ticket', { talkId: 'opening' })).toEqual({ content: [{ type: 'text', text: 'Forbidden' }], isError: true })
         })
 
-        it('answers 401 when a use case finds nobody behind an endpoint opened by anonymous', async () => {
-            const response = await clientOf(conference({ endpoint: endpoint({ anonymous: true }) })).post('/mcp', { json: callOf('who_am_i', {}) })
+        it.each(revisions)('answers 401 when a use case finds nobody behind an endpoint opened by anonymous, in $name', async revision => {
+            const { headers, json } = revision.call('who_am_i', {})
+
+            const response = await clientOf(conference({ endpoint: endpoint({ anonymous: true }) })).post('/mcp', { headers, json })
 
             response.failsWith(401)
             expect(response.headers.get('www-authenticate')).toBe('Bearer')
+        })
+
+        it('answers 401 to a token its authenticator refuses by throwing, also behind a ProblemResponder', async () => {
+            for (const provider of [conference(), conference({ pages: true })]) {
+                const response = await clientOf(provider).with({ headers: { authorization: 'Bearer expired' } }).post('/mcp', { json: rpc('tools/list') })
+
+                response.failsWith(401)
+                expect(response.headers.get('www-authenticate')).toBe('Bearer')
+            }
+        })
+
+        it('lets any other failure of its authenticator through, for the application to answer', async () => {
+            const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+            const response = await clientOf(conference()).with({ headers: { authorization: 'Bearer broken' } }).post('/mcp', { json: rpc('tools/list') })
+
+            response.failsWith(500)
+            expect(errors).toHaveBeenCalledWith(new Error('The vault of tokens is down'))
         })
     })
 
@@ -296,6 +348,13 @@ function boxOffice(provider = conference()): TestClient {
 
 async function call(client: TestClient, name: string, input: unknown): Promise<ToolResult> {
     const response = await client.post('/mcp', { json: callOf(name, input) })
+    response.succeeds(200)
+    return resultOf<ToolResult>(response.json())
+}
+
+async function callIn(client: TestClient, revision: Revision, name: string, input: unknown): Promise<ToolResult> {
+    const { headers, json } = revision.call(name, input)
+    const response = await client.post('/mcp', { headers, json })
     response.succeeds(200)
     return resultOf<ToolResult>(response.json())
 }

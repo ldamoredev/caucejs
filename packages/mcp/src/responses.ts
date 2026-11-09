@@ -26,8 +26,22 @@ export function methodNotAllowed(): Response {
 // subscriptions/listen opens a stream of server-sent events whatever the responseMode, to tell of a list that changed;
 // this list never changes, and the endpoint answers with JSON only.
 export function methodNotFound(id: unknown): Response {
-    return new Response(JSON.stringify({ jsonrpc: '2.0', id, error: { code: -32601, message: 'Method not found' } }), {
-        status: 200,
+    return jsonRpcError(200, -32601, 'Method not found', id)
+}
+
+// What the SDK answers for a body over its limit, and for one it cannot read, so the endpoint answers the same whoever
+// reads the body.
+export function payloadTooLarge(maxBytes: number): Response {
+    return jsonRpcError(413, -32000, `Payload Too Large: Request body must not exceed ${maxBytes} bytes`, null)
+}
+
+export function unreadableBody(): Response {
+    return jsonRpcError(400, -32700, 'Parse error: the request body could not be read', null)
+}
+
+function jsonRpcError(status: number, code: number, message: string, id: unknown): Response {
+    return new Response(JSON.stringify({ jsonrpc: '2.0', error: { code, message }, id }), {
+        status,
         headers: { 'content-type': 'application/json' },
     })
 }

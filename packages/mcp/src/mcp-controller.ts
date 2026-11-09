@@ -21,6 +21,8 @@ export type McpOptions = {
     /**
      * Who calls the endpoint, from the request: usually a token in the `authorization` header. It is the endpoint's
      * own, not the one of the application, so a session cookie does not open the endpoint and its token opens no page.
+     * Throwing `NotAuthenticatedError` refuses a token with a 401, as an anonymous identity does; any other error goes
+     * on to `web`.
      */
     readonly authenticator: Authenticator
     /** Lets in a caller the authenticator does not know. Closed by default: such a caller gets a 401. */

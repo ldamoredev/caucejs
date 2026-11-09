@@ -72,7 +72,9 @@ The canonical server, to copy: [`examples/conference-mcp.ts`](examples/conferenc
 - **Closed by default.** A caller the authenticator does not authenticate gets a **401 with `WWW-Authenticate: Bearer`**,
   before anything of MCP is read. With `permissions`, one that can do none of them gets a **403**.
   `anonymous: true` lets anybody in, and then the use cases decide; a use case that still finds nobody there,
-  `NotAuthenticatedError`, makes the request a 401. `anonymous` with `permissions` is refused, because it has no
+  `NotAuthenticatedError`, makes the request a 401. An authenticator that refuses a token by throwing
+  `NotAuthenticatedError` is a 401 too, answered by the endpoint; any other error it throws goes on to `web`, which
+  answers it as a problem. `anonymous` with `permissions` is refused, because it has no
   meaning.
 - **No `resource_metadata`, and 404 where a client looks for OAuth.** A 401 that names the metadata of a protected
   resource starts OAuth in the client, and a server with a token of its own has no OAuth to offer. So `mcp` answers 404
@@ -95,7 +97,8 @@ The canonical server, to copy: [`examples/conference-mcp.ts`](examples/conferenc
   There is no session, so a GET or a DELETE of the endpoint is a 405 with `Allow: POST`, as the SDK answers it. A
   `subscriptions/listen` of the revision 2026-07-28 is `-32601`, method not found, answered by `mcp` before the SDK:
   the SDK would open a stream of server-sent events for it whatever the `responseMode`, to tell of a list that never
-  changes.
+  changes. Its body is read for its id under the same limit of 4 MiB as any other, and a body over it is the same 413
+  the SDK answers.
 - **The SDK warns once.** Creating the handler with `responseMode: 'json'` writes a `console.warn` about the
   notifications it drops, once per server of MCP, when `Web` is built. Nothing else is written about what a request
   brings or what it is answered: neither the body, nor the arguments, nor the result.
