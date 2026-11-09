@@ -1,4 +1,5 @@
 import { NotAuthenticatedError, type ExecutionContext } from '@caucejs/application'
+import { CauceError } from '@caucejs/base'
 import type { Resolver } from '@caucejs/di'
 import type { ToolDescription, ToolOutcome, ToolRunner, UseCaseTool } from '@caucejs/tools'
 import type { Authenticator, RequestState } from '@caucejs/web'
@@ -15,7 +16,7 @@ import {
     type StandardSchemaWithJSON,
 } from '@modelcontextprotocol/server'
 
-import { forbidden, methodNotAllowed, unauthorized } from './responses.js'
+import { forbidden, methodNotAllowed, methodNotFound, unauthorized } from './responses.js'
 
 // The runtime's console: this package builds without the types of any runtime, and every runtime has one.
 declare const console: { error(...values: unknown[]): void }
@@ -46,6 +47,7 @@ const readByCauce: jsonSchemaValidator = {
 }
 
 const failed = 'Tool execution failed'
+const listen = 'subscriptions/listen'
 
 /** A server of MCP over HTTP: who calls it, and the SDK for what they say, one server of the SDK per request. */
 export class Endpoint {
@@ -67,7 +69,7 @@ export class Endpoint {
         this.#modern = createMcpHandler(
             context => {
                 const call = context.requestInfo ? this.#calls.get(context.requestInfo) : undefined
-                if (!call) throw new Error('A server of MCP was asked for a request it did not receive')
+                if (!call) throw new CauceError('A server of MCP was asked for a request it did not receive')
                 return this.#server(call)
             },
             { legacy: 'reject', responseMode: 'json' },
@@ -86,7 +88,9 @@ export class Endpoint {
         return call.unauthenticated ? unauthorized() : response
     }
 
-    #modernOf(request: Request, call: Call): Promise<Response> {
+    async #modernOf(request: Request, call: Call): Promise<Response> {
+        // the revision 2026-07-28 names the method in Mcp-Method, and the SDK refuses a body that names another one
+        if (request.headers.get('mcp-method')?.trim() === listen) return methodNotFound(await idOf(request))
         this.#calls.set(request, call)
         return this.#modern.fetch(request)
     }
@@ -97,6 +101,7 @@ export class Endpoint {
         const server = this.#server(call)
         const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
         await server.connect(transport)
+        // the exchange is over, or the client left: there is nothing to tell anybody if closing fails
         const teardown = (): void => {
             transport.close().catch(() => {})
             server.close().catch(() => {})
@@ -145,6 +150,15 @@ function resultOf(outcome: ToolOutcome): CallToolResult {
     // What the serializer wrote, so a date or a value object reads the same as text and as structured content.
     const written: unknown = JSON.parse(outcome.json)
     return { content: [{ type: 'text', text: outcome.json }], structuredContent: isObject(written) ? written : { result: written } }
+}
+
+async function idOf(request: Request): Promise<unknown> {
+    try {
+        const body: unknown = await request.json()
+        return isObject(body) && (typeof body['id'] === 'string' || typeof body['id'] === 'number') ? body['id'] : null
+    } catch {
+        return null
+    }
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

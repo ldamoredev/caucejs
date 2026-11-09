@@ -4,7 +4,6 @@
 // WebApplication.builder(), in @caucejs/node:
 //
 //     app.services.add(tools())
-//     app.addSettings(BoxOfficeSettings)
 //     app.services.addSingleton(BoxOfficeTokens)
 //     app.useCases.use(Authorization)
 //     app.useCases.handle(GetTalkHandler)
@@ -96,7 +95,8 @@ export class BoxOffice extends Identity {
     }
 }
 
-// Where the token comes from: in an application, a settings class bound from the configuration.
+// Where the token comes from. In an application it is a settings class of @caucejs/config, bound from the
+// configuration with app.addSettings, so the token never lives in the code.
 export class BoxOfficeSettings {
     readonly token: string = 'box-office-secret'
 }

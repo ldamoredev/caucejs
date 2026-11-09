@@ -28,6 +28,7 @@ export class McpTools {
         return this
     }
 
+    /** The tools added, for the controller that serves them. A copy: adding more changes nothing it was given. */
     build(): readonly UseCaseTool[] {
         return [...this.#tools]
     }

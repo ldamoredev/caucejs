@@ -23,6 +23,15 @@ export function methodNotAllowed(): Response {
     })
 }
 
+// subscriptions/listen opens a stream of server-sent events whatever the responseMode, to tell of a list that changed;
+// this list never changes, and the endpoint answers with JSON only.
+export function methodNotFound(id: unknown): Response {
+    return new Response(JSON.stringify({ jsonrpc: '2.0', id, error: { code: -32601, message: 'Method not found' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+    })
+}
+
 function problem(status: number, title: string, headers: Record<string, string> = {}): Response {
     return new Response(JSON.stringify({ type: 'about:blank', title, status }), {
         status,

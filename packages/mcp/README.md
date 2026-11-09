@@ -92,7 +92,10 @@ The canonical server, to copy: [`examples/conference-mcp.ts`](examples/conferenc
   The revision 2026-07-28 goes through `createMcpHandler` with `legacy: 'reject'` and `responseMode: 'json'`. The
   revisions of 2025 go through a `WebStandardStreamableHTTPServerTransport` with `enableJsonResponse`, a new one for
   each request: the fallback of the SDK for them, `legacy: 'stateless'`, answers with a stream of server-sent events.
-  There is no session, so a GET or a DELETE of the endpoint is a 405 with `Allow: POST`, as the SDK answers it.
+  There is no session, so a GET or a DELETE of the endpoint is a 405 with `Allow: POST`, as the SDK answers it. A
+  `subscriptions/listen` of the revision 2026-07-28 is `-32601`, method not found, answered by `mcp` before the SDK:
+  the SDK would open a stream of server-sent events for it whatever the `responseMode`, to tell of a list that never
+  changes.
 - **The SDK warns once.** Creating the handler with `responseMode: 'json'` writes a `console.warn` about the
   notifications it drops, once per server of MCP, when `Web` is built. Nothing else is written about what a request
   brings or what it is answered: neither the body, nor the arguments, nor the result.

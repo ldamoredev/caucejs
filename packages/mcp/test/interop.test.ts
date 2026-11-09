@@ -35,6 +35,23 @@ describe('the official client of MCP', () => {
         for (const contentType of answered) expect(contentType).toBe('application/json')
     })
 
+    it('is refused a subscription, which would be a stream, with the revision 2026-07-28', async () => {
+        const { fetch, answered } = recording(conference().get(Web).fetch)
+        const client = new Client({ name: 'box office', version: '1.0.0' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } })
+        await client.connect(
+            new StreamableHTTPClientTransport(new URL('http://localhost/mcp'), {
+                fetch,
+                requestInit: { headers: { authorization: 'Bearer box-office' } },
+            }),
+        )
+
+        const listening = client.listen({ toolsListChanged: true })
+        await expect(listening).rejects.toMatchObject({ code: -32601 })
+        await client.close()
+
+        for (const contentType of answered) expect(contentType).toBe('application/json')
+    })
+
     it('is refused without its token', async () => {
         const client = new Client({ name: 'nobody', version: '1.0.0' })
 
