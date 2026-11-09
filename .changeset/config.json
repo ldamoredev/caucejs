@@ -20,7 +20,8 @@
       "@caucejs/web",
       "@caucejs/http-client",
       "@caucejs/tools",
-      "@caucejs/ai"
+      "@caucejs/ai",
+      "@caucejs/mcp"
     ]
   ],
   "linked": [],

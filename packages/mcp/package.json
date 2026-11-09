@@ -1,0 +1,55 @@
+{
+  "name": "@caucejs/mcp",
+  "version": "0.9.0",
+  "description": "The server of MCP of Cauce: the tools of an application over HTTP, on the official SDK, stateless and with JSON only, behind an authenticator of its own, and run through every middleware.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/mcp#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@caucejs/application": "workspace:*",
+    "@caucejs/base": "workspace:*",
+    "@caucejs/di": "workspace:*",
+    "@caucejs/tools": "workspace:*",
+    "@caucejs/web": "workspace:*",
+    "@modelcontextprotocol/server": "^2.4.0"
+  },
+  "devDependencies": {
+    "@caucejs/schema": "workspace:*",
+    "@caucejs/testing": "workspace:*",
+    "@caucejs/typescript-config": "workspace:*",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "^4.6.5"
+  }
+}
