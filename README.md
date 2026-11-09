@@ -38,6 +38,7 @@ A pnpm workspace orchestrated with Turborepo.
 | `packages/web` | `@caucejs/web` | The web, on Hono: routes that are use cases, one scope and one identity per request, problems as RFC 9457, and the `fetch` of the application |
 | `packages/http-client` | `@caucejs/http-client` | The HTTP client, on the fetch standard: a client per system with a base and headers, responses read with a schema, typed errors, and replaced in a test |
 | `packages/tools` | `@caucejs/tools` | The tools: a use case described once as a tool, for a server of MCP and for a model, read with the serializer, run through every middleware, and what fails answered for the caller to read |
+| `packages/ai` | `@caucejs/ai` | The AI: one call to a model on Anthropic's Messages API, over the HTTP client, with its usage in tokens, its stop reason and errors that never carry the prompt |
 | `packages/testing` | `@caucejs/testing` | What a test needs: examples without randomness, a scenario that builds and saves, a client that calls the application in memory |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
