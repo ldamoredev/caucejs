@@ -18,7 +18,8 @@
       "@caucejs/application",
       "@caucejs/schema",
       "@caucejs/web",
-      "@caucejs/http-client"
+      "@caucejs/http-client",
+      "@caucejs/tools"
     ]
   ],
   "linked": [],
