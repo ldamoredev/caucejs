@@ -32,6 +32,15 @@ export class UseCases {
         this.#middlewares = middlewares
     }
 
+    /**
+     * Whether a handler was added for this class of request, so a module that executes requests it was handed, such
+     * as the tools of a server, fails when it is built instead of on the first call. A subclass of a handled request
+     * is not handled, as in {@link execute}.
+     */
+    handles(request: Token<Request<unknown>>): boolean {
+        return this.#handlers.has(request)
+    }
+
     /** Throws {@link HandlerNotAddedError} for a request without a handler, before any middleware runs. */
     execute<T extends Request<unknown>>(request: T, options: ExecuteOptions): Promise<ResultOf<T>> {
         const requestClass = request.constructor as Token<Request<unknown>>
