@@ -1,5 +1,12 @@
 # @caucejs/config
 
+## 0.10.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.10.0
+
 ## 0.9.0
 
 ### Patch Changes

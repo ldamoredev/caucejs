@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/ai",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "The AI of Cauce: a call to a model and the loop that runs the tools of the application for it, over the HttpClient, with its usage in tokens and typed errors that never carry the prompt.",
   "license": "MIT",
   "type": "module",
