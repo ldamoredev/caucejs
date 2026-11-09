@@ -11,3 +11,15 @@ export type Usage = {
 
 /** The usage of a call that got no readable answer. */
 export const unknownUsage: Usage = { inputTokens: null, outputTokens: null, cacheReadTokens: null, cacheWriteTokens: null }
+
+/** The usage of several calls, field by field. A field is `null` when any of them does not know it. */
+export function totalOf(usages: readonly Usage[]): Usage {
+    const sum = (field: keyof Usage) =>
+        usages.reduce<number | null>((total, usage) => (total === null || usage[field] === null ? null : total + usage[field]), 0)
+    return { inputTokens: sum('inputTokens'), outputTokens: sum('outputTokens'), cacheReadTokens: sum('cacheReadTokens'), cacheWriteTokens: sum('cacheWriteTokens') }
+}
+
+/** Whether a call said anything of what it spent. */
+export function isReported(usage: Usage): boolean {
+    return Object.values(usage).some(tokens => tokens !== null)
+}
