@@ -294,6 +294,21 @@ describe('the usage of a run', () => {
         expect((error as Error).stack).toBe(quota.stack)
     })
 
+    // The limits of the copy: what it cannot keep, fixed here so a change to how it copies shows.
+    it('loses the private fields of an error, and its copy is not a native error', async () => {
+        const sealed = new SealedQuotaError('monthly', spent(10, 0))
+        const model = new ScriptedModel([tooling(spent(500, 40)), sealed])
+
+        const error = await failing(asking(model, withTools([getTalk])))
+
+        expect(error).toBeInstanceOf(SealedQuotaError)
+        expect(() => (error as SealedQuotaError).period).toThrow(TypeError)
+        expect(sealed.period).toBe('monthly')
+        const isError = (Error as unknown as { isError: (value: unknown) => boolean }).isError
+        expect([isError(sealed), isError(error)]).toEqual([true, false])
+        expect(structuredClone(error)).not.toBeInstanceOf(Error)
+    })
+
     it('leaves out what is not an error of a model, which is thrown as it is', async () => {
         const broken = new TypeError('the model is broken')
         const model = new ScriptedModel([tooling(spent(500, 40)), broken])
@@ -335,6 +350,20 @@ async function failing(promise: Promise<unknown>): Promise<Error> {
         return error as Error
     }
     throw new Error('It did not fail')
+}
+
+// An error of a model that keeps its field private, which a copy cannot read.
+class SealedQuotaError extends ModelError {
+    readonly #period: string
+
+    constructor(period: string, usage: Usage, options?: ErrorOptions) {
+        super(`The quota of ${period} is spent`, usage, options)
+        this.#period = period
+    }
+
+    get period(): string {
+        return this.#period
+    }
 }
 
 // An error of a model that this package does not know, with a field of its own.

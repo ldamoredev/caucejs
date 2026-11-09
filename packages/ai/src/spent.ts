@@ -15,9 +15,13 @@ export function spentIn(error: unknown, answered: readonly Usage[]): unknown {
     return withUsage(error, usage)
 }
 
-// A copy of the same class with every field, its message, its cause and its stack, so a subclass this package does
+// A copy of the same class with every own field, its message, its cause and its stack, so a subclass this package does
 // not know keeps what it carries. The error that was thrown is left as it was. The stack is copied as a value: V8 reads
 // it through an accessor tied to the error it was captured on.
+//
+// What a copy cannot keep: a field written with `#` is not on the object, so a subclass that keeps one loses it, and
+// its getter throws a TypeError on the copy. Nor is the copy a native error, as it was not built by a constructor:
+// `Error.isError` answers false for it, and `structuredClone` turns it into a plain object.
 function withUsage<E extends ModelError>(error: E, usage: Usage): E {
     return Object.create(Object.getPrototypeOf(error) as object, {
         ...Object.getOwnPropertyDescriptors(error),

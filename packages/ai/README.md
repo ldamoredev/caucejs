@@ -129,16 +129,25 @@ The canonical use, to copy: [`examples/conference-ai.ts`](examples/conference-ai
   the run throws `MaxStepsExceededError` with the names of the tools that ran and the usage of every step. **Not their
   content**: what the tools answered can hold the notes of a user, and an error is printed whole.
 - **The usage is that of each step, and all of them added**, field by field: a field is `null` when one step does not
-  know it. **A call that fails in the middle throws the same error**, a copy with the class, the fields, the cause and
-  the stack of the one thrown, and the usage the provider reported in the whole run: the steps that answered, and the
-  call that failed when it says what it spent, as an `IncompleteResponseError` does. A call with no usage at all adds
-  nothing, and a run where nothing reported any is unknown, as the error of one call: a call that got no answer may
-  still have been charged. Anything that is not a `ModelError` is thrown as it is.
+  know it.
+- **A call that fails in the middle throws the same error**, a copy with the class, the own fields, the cause and the
+  stack of the one thrown, and the usage the provider reported in the whole run: the steps that answered, added as in
+  the result, and the call that failed when it says what it spent, as an `IncompleteResponseError` does. A step that
+  answered without a field of its usage leaves that field unknown in the error too, as in the result: **only the call
+  that failed adds nothing when all of its usage is `null`.** A run where nothing reported any usage is unknown, as the
+  error of one call: a call that got no answer may still have been charged. Anything that is not a `ModelError` is
+  thrown as it is.
+- **The copy has limits.** A field a subclass writes with `#` is not on the object, so the copy loses it, and its getter
+  throws a `TypeError`. The copy is not a native error either, since no constructor built it: `Error.isError` answers
+  `false` for it, and `structuredClone` turns it into a plain object. A test fixes both.
 - **`ScriptedModel` never repeats its last answer.** Past the end of its script it throws `ScriptExhaustedError`, so a
   run that keeps asking fails the test instead of passing unseen.
-- **A tool whose handler asks for `Ai` cannot run.** The scope `Ai` keeps is the resolver of its factory, which carries
-  the path `Ai` was built on, so resolving `Ai` again from a tool finds a cycle that is not there, and the model reads
-  `Tool execution failed`. A test fixes this limit, and fails the day the container forgets that path.
+- **A tool cannot ask for a service on the path `Ai` was built on.** The scope `Ai` keeps is the resolver of its
+  factory, which carries that path, and the container checks the path before the services the scope already built. So
+  a tool whose handler, or anything it injects, asks for a service on it finds a cycle that is not there: `Ai` itself,
+  the handler that asked for it, or anything in between, such as a scoped `Conversation` in
+  `AskHandler -> Conversation -> Ai`, **even when the scope built it already and the tool never asks for `Ai`**. The
+  model reads `Tool execution failed`. Two tests fix this limit, and fail the day the container forgets that path.
 
 ### What is not here
 
