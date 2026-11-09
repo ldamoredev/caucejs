@@ -19,7 +19,8 @@
       "@caucejs/schema",
       "@caucejs/web",
       "@caucejs/http-client",
-      "@caucejs/tools"
+      "@caucejs/tools",
+      "@caucejs/ai"
     ]
   ],
   "linked": [],

@@ -1,0 +1,49 @@
+{
+  "name": "@caucejs/ai",
+  "version": "0.8.0",
+  "description": "The AI of Cauce: one call to a model, over the HttpClient of the application, with its usage in tokens, its stop reason and typed errors that never carry the prompt.",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ldamoredev/caucejs.git",
+    "directory": "packages/ai"
+  },
+  "bugs": {
+    "url": "https://github.com/ldamoredev/caucejs/issues"
+  },
+  "homepage": "https://github.com/ldamoredev/caucejs/tree/main/packages/ai#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@caucejs/base": "workspace:*",
+    "@caucejs/config": "workspace:*",
+    "@caucejs/di": "workspace:*",
+    "@caucejs/http-client": "workspace:*"
+  },
+  "devDependencies": {
+    "@caucejs/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

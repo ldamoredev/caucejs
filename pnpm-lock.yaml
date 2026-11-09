@@ -30,6 +30,31 @@ importers:
         specifier: ^2.10.13
         version: 2.10.13
 
+  packages/ai:
+    dependencies:
+      '@caucejs/base':
+        specifier: workspace:*
+        version: link:../base
+      '@caucejs/config':
+        specifier: workspace:*
+        version: link:../config
+      '@caucejs/di':
+        specifier: workspace:*
+        version: link:../di
+      '@caucejs/http-client':
+        specifier: workspace:*
+        version: link:../http-client
+    devDependencies:
+      '@caucejs/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
+
   packages/application:
     dependencies:
       '@caucejs/base':
