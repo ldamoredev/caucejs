@@ -1,5 +1,13 @@
 # @caucejs/testing
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @caucejs/base@0.9.0
+  - @caucejs/di@0.9.0
+
 ## 0.8.0
 
 ### Patch Changes
