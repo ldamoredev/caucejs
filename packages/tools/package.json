@@ -1,6 +1,6 @@
 {
   "name": "@caucejs/tools",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "The tools of Cauce: a use case described once as a tool, read with the JSON serializer and executed through every middleware, for a model and for an MCP server.",
   "license": "MIT",
   "type": "module",

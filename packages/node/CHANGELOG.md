@@ -1,5 +1,18 @@
 # @caucejs/node
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies [[`765c1fc`](https://github.com/ldamoredev/caucejs/commit/765c1fc6fd3babfdf16cecfbff69256026839b80)]:
+  - @caucejs/application@0.9.0
+  - @caucejs/web@0.9.0
+  - @caucejs/base@0.9.0
+  - @caucejs/di@0.9.0
+  - @caucejs/config@0.9.0
+  - @caucejs/hosting@0.9.0
+  - @caucejs/schema@0.9.0
+
 ## 0.8.0
 
 ### Patch Changes
