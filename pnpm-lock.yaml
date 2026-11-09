@@ -32,6 +32,9 @@ importers:
 
   packages/ai:
     dependencies:
+      '@caucejs/application':
+        specifier: workspace:*
+        version: link:../application
       '@caucejs/base':
         specifier: workspace:*
         version: link:../base
@@ -44,7 +47,13 @@ importers:
       '@caucejs/http-client':
         specifier: workspace:*
         version: link:../http-client
+      '@caucejs/tools':
+        specifier: workspace:*
+        version: link:../tools
     devDependencies:
+      '@caucejs/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@caucejs/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -54,6 +63,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5))
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/application:
     dependencies:

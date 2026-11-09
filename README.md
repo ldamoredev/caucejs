@@ -39,7 +39,7 @@ A pnpm workspace orchestrated with Turborepo.
 | `packages/http-client` | `@caucejs/http-client` | The HTTP client, on the fetch standard: a client per system with a base and headers, responses read with a schema, typed errors, and replaced in a test |
 | `packages/tools` | `@caucejs/tools` | The tools: a use case described once as a tool, for a server of MCP and for a model, read with the serializer, run through every middleware, and what fails answered for the caller to read |
 | `packages/mcp` | `@caucejs/mcp` | The server of MCP: the tools over HTTP on the official SDK, without state and with JSON only, behind an authenticator of its own, closed by default and without OAuth |
-| `packages/ai` | `@caucejs/ai` | The AI: one call to a model on Anthropic's Messages API, over the HTTP client, with its usage in tokens, its stop reason and errors that never carry the prompt |
+| `packages/ai` | `@caucejs/ai` | The AI: a call to a model on Anthropic's Messages API, over the HTTP client, and the loop that runs the tools it asks for in the scope of the use case that asked, with the usage in tokens of each step and errors that never carry the prompt |
 | `packages/testing` | `@caucejs/testing` | What a test needs: examples without randomness, a scenario that builds and saves, a client that calls the application in memory |
 | `packages/typescript-config` | `@caucejs/typescript-config` | Shared TypeScript configuration. Private, not published |
 
