@@ -36,7 +36,7 @@ examples, live in the documents it points to.
 | Call another system over HTTP | [`packages/http-client/README.md`](packages/http-client/README.md) and its canonical example |
 | Describe a use case as a tool, for MCP or a model | [`packages/tools/README.md`](packages/tools/README.md) and its canonical example |
 | Serve the tools to a client of MCP | [`packages/mcp/README.md`](packages/mcp/README.md) and its canonical example |
-| Call a model | [`packages/ai/README.md`](packages/ai/README.md) |
+| Call a model, or run it with the tools of the application | [`packages/ai/README.md`](packages/ai/README.md) and its canonical example |
 | Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests), and [`packages/testing/README.md`](packages/testing/README.md) with its canonical example |
 | Open a pull request | [Workflow](#workflow), and the `review` skill |
 
