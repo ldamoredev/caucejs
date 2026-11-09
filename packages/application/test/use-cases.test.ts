@@ -50,6 +50,17 @@ describe('use cases', () => {
         await expect(execute(new BackDoors('south'))).rejects.toThrow(HandlerNotAddedError)
     })
 
+    it('say whether a handler was added for a class of request', () => {
+        const useCases = provider.get(UseCases)
+
+        expect(useCases.handles(GetVenue)).toBe(true)
+        expect(useCases.handles(Unhandled)).toBe(false)
+    })
+
+    it('do not take a subclass of a handled request for one they handle', () => {
+        expect(provider.get(UseCases).handles(BackDoors)).toBe(false)
+    })
+
     describe('middlewares', () => {
         it('run in the order they were written, the first one outermost', async () => {
             await execute(new GetVenue())

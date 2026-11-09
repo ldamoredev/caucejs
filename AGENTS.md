@@ -34,6 +34,7 @@ examples, live in the documents it points to.
 | Read a body, a form or the arguments of a tool | [`packages/schema/README.md`](packages/schema/README.md) and its canonical example |
 | Serve a route, a page or a controller | [`packages/web/README.md`](packages/web/README.md) and its canonical example |
 | Call another system over HTTP | [`packages/http-client/README.md`](packages/http-client/README.md) and its canonical example |
+| Describe a use case as a tool, for MCP or a model | [`packages/tools/README.md`](packages/tools/README.md) and its canonical example |
 | Write tests | "Tests" in [docs/conventions.md](docs/conventions.md#tests), and [`packages/testing/README.md`](packages/testing/README.md) with its canonical example |
 | Open a pull request | [Workflow](#workflow), and the `review` skill |
 

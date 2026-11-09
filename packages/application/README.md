@@ -42,7 +42,7 @@ The canonical use cases, to copy: [`examples/conference-use-cases.ts`](examples/
 | `Handler` | Executes one kind of request, with the context of the execution. `Handler.of(SellTicket)` names its request, so it is added alone |
 | `Middleware` | Wraps every execution: `execute(request, context, next)` |
 | `application`, `ApplicationBuilder` | The extension, and what `WebApplicationBuilder` exposes as `useCases`: `use` adds middlewares, in order; `handle` adds a handler, alone when it names its request |
-| `UseCases` | Executes a request: `execute(request, { scope, context })` |
+| `UseCases` | Executes a request: `execute(request, { scope, context })`. `handles(GetTalk)` says whether a handler was added for a class of request, for a module that has to fail when it is built |
 | `ExecutionContext`, `ContextKey` | Who executes, and values under typed keys. It never changes |
 | `Identity`, `AnonymousIdentity`, `SystemIdentity` | Who executes. The application writes its own |
 | `Authorization` | The middleware that refuses nobody (401) and who cannot (403), closed by default |
